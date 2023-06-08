@@ -168,7 +168,14 @@ class _HomeState extends State<Home> {
                                       )
                                     ],
                                   ),
-                                  const Divider(height: 5),
+                                  const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    child: Divider(
+                                      height: 3,
+                                      thickness: 0.5,
+                                    ),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
@@ -247,9 +254,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget cardSubItem(String title, String subtitle) {
-    TextStyle titleStyle = const TextStyle(color: Colors.white, fontSize: 14);
+    TextStyle titleStyle = const TextStyle(
+        color: Colors.white, fontSize: 12, fontWeight: FontWeight.w300);
     TextStyle subTitleStyle = const TextStyle(
-        color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold);
+      color: Colors.white,
+      fontSize: 16,
+    );
     return SizedBox(
       width: ScreenSize.width * 0.27,
       child: Column(
