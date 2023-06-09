@@ -178,7 +178,8 @@ class _HomeState extends State<Home> {
                                                 const SizedBox(
                                                   height: 5,
                                                 ),
-                                                cardSubItem("Done By", "VOG"),
+                                                cardSubItem("Doctor Name",
+                                                    "Dr. John Doe"),
                                               ],
                                             ),
                                           ),
@@ -203,6 +204,7 @@ class _HomeState extends State<Home> {
                                     child: Row(
                                       children: [
                                         cardSubItem("Date", "2018-12-12"),
+                                        cardSubItem("Done By", "VOG"),
                                         Flexible(
                                           child: ButtonBar(
                                             children: [

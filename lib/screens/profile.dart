@@ -9,6 +9,36 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(
+                  Colors.black,
+                ),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+              onPressed: () {},
+              child: const Row(
+                children: [
+                  Icon(Icons.logout),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "Log out",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: SizedBox(
@@ -17,6 +47,9 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10),
             child: Column(
               children: [
+                const SizedBox(
+                  height: 50,
+                ),
                 const CircleAvatar(
                   radius: 62,
                   child: Hero(
