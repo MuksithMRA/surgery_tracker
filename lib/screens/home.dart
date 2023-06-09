@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:surgery_tracker/models/screen_size.dart';
+import 'package:surgery_tracker/screens/profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -9,16 +10,27 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.white,
-        onPressed: () {},
-        icon: const Icon(Icons.add, color: Colors.blue),
+        onPressed: () {
+          showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              useSafeArea: true,
+              builder: (_) => addSurgery());
+        },
+        icon: const Icon(
+          Icons.add,
+          color: Colors.blue,
+        ),
         label: const Text(
           "Add Surgery",
-          style: TextStyle(color: Colors.blue, fontSize: 18),
+          style: TextStyle(
+              color: Colors.blue, fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ),
       appBar: AppBar(
@@ -26,7 +38,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Surgery Track",
+              "Surgery Tracker",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -39,8 +51,17 @@ class _HomeState extends State<Home> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.person_2),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()));
+            },
+            icon: Hero(
+              tag: 'doctor_profile',
+              child: CircleAvatar(
+                foregroundColor: Theme.of(context).primaryColor,
+                backgroundImage: const AssetImage("assets/doctor_avatar.jpg"),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -274,6 +295,124 @@ class _HomeState extends State<Home> {
             style: subTitleStyle,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget addSurgery() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+      height: ScreenSize.height * 0.9,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Form(
+        key: _key,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: ScreenSize.height * 0.01),
+            const Text(
+              "Add Your Surgery Record",
+              style: TextStyle(
+                fontSize: 25,
+              ),
+            ),
+            const Text(
+              "Please fill the form below",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            SizedBox(
+              height: ScreenSize.height * 0.05,
+            ),
+            TextFormField(
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Surgery Name Required";
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                hintText: 'Enter Surgery Name',
+                filled: true,
+                fillColor: Colors.grey.shade200,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "BHT Number Required";
+                }
+                return null;
+              },
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Enter BHT Number',
+                filled: true,
+                fillColor: Colors.grey.shade200,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  fixedSize: MaterialStateProperty.all(
+                    Size(
+                      ScreenSize.width,
+                      ScreenSize.height * 0.065,
+                    ),
+                  )),
+              onPressed: () {
+                if (_key.currentState!.validate()) {}
+              },
+              child: const Text(
+                "Submit Record",
+                style: TextStyle(fontSize: 17, color: Colors.white),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            OutlinedButton(
+              style: ButtonStyle(
+                  side: MaterialStateProperty.all(
+                    const BorderSide(color: Colors.blue),
+                  ),
+                  fixedSize: MaterialStateProperty.all(
+                    Size(
+                      ScreenSize.width,
+                      ScreenSize.height * 0.065,
+                    ),
+                  )),
+              onPressed: () {
+                Navigator.pop(context);
+                _key.currentState!.reset();
+              },
+              child: const Text(
+                "Cancel",
+                style: TextStyle(fontSize: 17, color: Colors.blue),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

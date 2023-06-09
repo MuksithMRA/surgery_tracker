@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:surgery_tracker/screens/splash.dart';
 
 void main() {
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.blue,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
+        textTheme: GoogleFonts.latoTextTheme(),
       ),
       home: const SplashScreen(),
     );
