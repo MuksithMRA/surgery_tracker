@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:surgery_tracker/models/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
+import 'package:surgery_tracker/widgets/utils.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,11 +32,30 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenSize.init(context);
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          "Surgery Tracker",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    return Scaffold(
+      body: SizedBox(
+        width: ScreenSize.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Utils.logo(),
+            const SizedBox(
+              height: 10,
+            ),
+            const Text(
+              "Surgery Tracker",
+              style: TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Text(
+              "Track your surgeries easily",
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
       ),
     );
