@@ -29,194 +29,201 @@ class _RegisterScreenState extends State<RegisterScreen> {
             SizedBox(
               height: ScreenSize.height * 0.06,
             ),
-            Form(
-              key: _key,
-              child: Column(
-                children: [
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Full Name Required";
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Full Name',
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Doctor ID Required";
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Doctor ID',
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  DropdownButtonFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: InputDecoration(
-                        hintText: 'Choose Speciality',
-                        filled: true,
-                        fillColor: Colors.grey.shade200,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      value: 0,
-                      items: const [
-                        DropdownMenuItem(
-                          value: 0,
-                          child: Text("Cardiology"),
-                        ),
-                      ],
-                      onChanged: (value) {}),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Email Address Required";
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'Email Address',
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password Required";
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Confirm Password Required";
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'Confirm Password',
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.blue),
-                        fixedSize: MaterialStateProperty.all(
-                          Size(
-                            ScreenSize.width,
-                            ScreenSize.height * 0.065,
-                          ),
-                        )),
-                    onPressed: () {
-                      if (_key.currentState!.validate()) {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => const Home()));
-                      }
-                    },
-                    child: const Text(
-                      "Register",
-                      style: TextStyle(fontSize: 17, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  RichText(
-                      text: TextSpan(
+            Expanded(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _key,
+                  child: Column(
                     children: [
-                      const TextSpan(
-                        text: "Already have an account? ",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      const WidgetSpan(
-                          child: SizedBox(
-                        width: 2,
-                      )),
-                      TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const LoginScreen(),
-                              ),
-                            );
-                          },
-                        text: "Login",
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w600,
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Full Name Required";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Full Name',
+                          filled: true,
+                          fillColor: Colors.grey.shade200,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Doctor ID Required";
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Doctor ID',
+                          filled: true,
+                          fillColor: Colors.grey.shade200,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      DropdownButtonFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: InputDecoration(
+                            hintText: 'Choose Speciality',
+                            filled: true,
+                            fillColor: Colors.grey.shade200,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          value: 0,
+                          items: const [
+                            DropdownMenuItem(
+                              value: 0,
+                              child: Text("Cardiology"),
+                            ),
+                          ],
+                          onChanged: (value) {}),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email Address Required";
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'Email Address',
+                          filled: true,
+                          fillColor: Colors.grey.shade200,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password Required";
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          filled: true,
+                          fillColor: Colors.grey.shade200,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Confirm Password Required";
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'Confirm Password',
+                          filled: true,
+                          fillColor: Colors.grey.shade200,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.blue),
+                            fixedSize: MaterialStateProperty.all(
+                              Size(
+                                ScreenSize.width,
+                                ScreenSize.height * 0.065,
+                              ),
+                            )),
+                        onPressed: () {
+                          if (_key.currentState!.validate()) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const Home()));
+                          }
+                        },
+                        child: const Text(
+                          "Register",
+                          style: TextStyle(fontSize: 17, color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: "Already have an account? ",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          const WidgetSpan(
+                              child: SizedBox(
+                            width: 2,
+                          )),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginScreen(),
+                                  ),
+                                );
+                              },
+                            text: "Login",
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ))
                     ],
-                  ))
-                ],
+                  ),
+                ),
               ),
             ),
           ],
