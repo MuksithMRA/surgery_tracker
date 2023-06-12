@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:surgery_tracker/models/screen_size.dart';
+import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/screens/profile.dart';
 
 class Home extends StatefulWidget {
@@ -17,10 +18,10 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.white,
         onPressed: () {
-          showModalBottomSheet(
-              isScrollControlled: true,
+          showDialog(
               context: context,
               useSafeArea: true,
+              barrierDismissible: false,
               builder: (_) => addSurgery());
         },
         icon: const Icon(
@@ -76,7 +77,10 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()));
+              },
               child: const Row(
                 children: [
                   Icon(Icons.logout),
@@ -302,37 +306,34 @@ class _HomeState extends State<Home> {
   }
 
   Widget addSurgery() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-      height: ScreenSize.height * 0.9,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      title: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Add Your Surgery Record",
+            style: TextStyle(
+              fontSize: 25,
+            ),
+          ),
+          Text(
+            "Please fill the form below",
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+        ],
       ),
-      child: Form(
+      content: Form(
         key: _key,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: ScreenSize.height * 0.01),
-            const Text(
-              "Add Your Surgery Record",
-              style: TextStyle(
-                fontSize: 25,
-              ),
-            ),
-            const Text(
-              "Please fill the form below",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
             SizedBox(
-              height: ScreenSize.height * 0.05,
+              height: ScreenSize.height * 0.03,
             ),
             TextFormField(
-              autofocus: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Surgery Name Required";
@@ -353,6 +354,7 @@ class _HomeState extends State<Home> {
               height: 15,
             ),
             TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "BHT Number Required";
@@ -370,52 +372,51 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 15,
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.blue),
-                  fixedSize: MaterialStateProperty.all(
-                    Size(
-                      ScreenSize.width,
-                      ScreenSize.height * 0.065,
-                    ),
-                  )),
-              onPressed: () {
-                if (_key.currentState!.validate()) {}
-              },
-              child: const Text(
-                "Submit Record",
-                style: TextStyle(fontSize: 17, color: Colors.white),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            OutlinedButton(
-              style: ButtonStyle(
-                  side: MaterialStateProperty.all(
-                    const BorderSide(color: Colors.blue),
-                  ),
-                  fixedSize: MaterialStateProperty.all(
-                    Size(
-                      ScreenSize.width,
-                      ScreenSize.height * 0.065,
-                    ),
-                  )),
-              onPressed: () {
-                Navigator.pop(context);
-                _key.currentState!.reset();
-              },
-              child: const Text(
-                "Cancel",
-                style: TextStyle(fontSize: 17, color: Colors.blue),
-              ),
-            )
           ],
         ),
       ),
+      actions: [
+        ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.blue),
+              fixedSize: MaterialStateProperty.all(
+                Size(
+                  ScreenSize.width,
+                  ScreenSize.height * 0.065,
+                ),
+              )),
+          onPressed: () {
+            if (_key.currentState!.validate()) {}
+          },
+          child: const Text(
+            "Submit Record",
+            style: TextStyle(fontSize: 17, color: Colors.white),
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        OutlinedButton(
+          style: ButtonStyle(
+              side: MaterialStateProperty.all(
+                const BorderSide(color: Colors.blue),
+              ),
+              fixedSize: MaterialStateProperty.all(
+                Size(
+                  ScreenSize.width,
+                  ScreenSize.height * 0.065,
+                ),
+              )),
+          onPressed: () {
+            Navigator.pop(context);
+            _key.currentState!.reset();
+          },
+          child: const Text(
+            "Cancel",
+            style: TextStyle(fontSize: 17, color: Colors.blue),
+          ),
+        )
+      ],
     );
   }
 }
