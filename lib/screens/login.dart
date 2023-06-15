@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 10,
               ),
               TextFormField(
+                obscureText: true,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value == null || value.isEmpty) {

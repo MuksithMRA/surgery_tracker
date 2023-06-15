@@ -42,6 +42,7 @@ class _HomeState extends State<Home> {
               "Surgery Tracker",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
             Text(
@@ -142,125 +143,45 @@ class _HomeState extends State<Home> {
                                 color: Colors.blue,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              height: 200,
                               width: ScreenSize.width,
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Icon(
-                                          Icons.person,
-                                          size: 95,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: Row(
+                                      children: [
+                                        cardSubItem(
+                                          "Consultant Name",
+                                          "Dr. John Doe",
+                                          width: ScreenSize.width * 0.8,
                                         ),
-                                      ),
-                                      Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 5),
-                                            child: Row(
-                                              children: [
-                                                cardSubItem(
-                                                    "Surgery", "TAH+BSO"),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                cardSubItem("BHT", "14289"),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 5),
-                                            child: Row(
-                                              children: [
-                                                cardSubItem(
-                                                    "Doctor ID", "451235"),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                cardSubItem("Doctor Name",
-                                                    "Dr. John Doe"),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: Divider(
-                                      height: 3,
-                                      thickness: 0.5,
+                                      ],
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
+                                        horizontal: 5),
                                     child: Row(
                                       children: [
                                         cardSubItem("Date", "2018-12-12"),
                                         cardSubItem("Done By", "VOG"),
-                                        Flexible(
-                                          child: ButtonBar(
-                                            children: [
-                                              InkWell(
-                                                onTap: () {},
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  decoration:
-                                                      const ShapeDecoration(
-                                                    color: Color(0xfff0ad4e),
-                                                    shape: CircleBorder(
-                                                      side: BorderSide(
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.edit,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {},
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  decoration:
-                                                      const ShapeDecoration(
-                                                    color: Colors.red,
-                                                    shape: CircleBorder(
-                                                      side: BorderSide(
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.delete,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                        cardActionButton("E"),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: Row(
+                                      children: [
+                                        cardSubItem("Surgery", "TAH+BSO"),
+                                        const SizedBox(
+                                          height: 5,
                                         ),
+                                        cardSubItem("BHT", "14289"),
+                                        cardActionButton("D"),
                                       ],
                                     ),
                                   )
@@ -284,7 +205,98 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget cardSubItem(String title, String subtitle) {
+  Widget cardActionButton(String action) {
+    IconData icon = Icons.edit;
+    String text = "Edit";
+    Color color = const Color(0xfff39c12);
+    if (action == "D") {
+      icon = Icons.delete;
+      text = "Delete";
+      color = const Color(0xffe74c3c);
+    }
+    return ElevatedButton(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 10)),
+        fixedSize: MaterialStateProperty.all(Size(ScreenSize.width * 0.25, 40)),
+        shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        backgroundColor: MaterialStateProperty.all(
+          color,
+        ),
+        foregroundColor: MaterialStateProperty.all(
+          Colors.white,
+        ),
+      ),
+      onPressed: () {},
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 19,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(text),
+        ],
+      ),
+    );
+  }
+
+  SizedBox cardActionButtons() {
+    return SizedBox(
+      width: ScreenSize.width * 0.27,
+      child: ButtonBar(
+        alignment: MainAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const ShapeDecoration(
+                color: Color(0xfff0ad4e),
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
+              child: const Icon(
+                Icons.edit,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const ShapeDecoration(
+                color: Colors.red,
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
+              child: const Icon(
+                Icons.delete,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget cardSubItem(String title, String subtitle, {double? width}) {
     TextStyle titleStyle = const TextStyle(
         color: Colors.white, fontSize: 12, fontWeight: FontWeight.w300);
     TextStyle subTitleStyle = const TextStyle(
@@ -292,7 +304,7 @@ class _HomeState extends State<Home> {
       fontSize: 16,
     );
     return SizedBox(
-      width: ScreenSize.width * 0.27,
+      width: width ?? ScreenSize.width * 0.3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

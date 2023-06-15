@@ -39,12 +39,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Full Name Required";
+                            return "First Name Required";
                           }
                           return null;
                         },
                         decoration: InputDecoration(
-                          hintText: 'Full Name',
+                          prefixIcon: const Icon(Icons.person_rounded),
+                          hintText: 'First Name',
                           filled: true,
                           fillColor: Colors.grey.shade200,
                           border: OutlineInputBorder(
@@ -60,13 +61,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Doctor ID Required";
+                            return "Last Name Required";
                           }
                           return null;
                         },
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          hintText: 'Enter Doctor ID',
+                          prefixIcon: const Icon(Icons.person_rounded),
+                          hintText: 'Last Name',
                           filled: true,
                           fillColor: Colors.grey.shade200,
                           border: OutlineInputBorder(
@@ -78,25 +80,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 15,
                       ),
-                      DropdownButtonFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          decoration: InputDecoration(
-                            hintText: 'Choose Speciality',
-                            filled: true,
-                            fillColor: Colors.grey.shade200,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Speciality Required";
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.medication_rounded),
+                          hintText: 'Speciality',
+                          filled: true,
+                          fillColor: Colors.grey.shade200,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          value: 0,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 0,
-                              child: Text("Cardiology"),
-                            ),
-                          ],
-                          onChanged: (value) {}),
+                        ),
+                      ),
                       const SizedBox(
                         height: 15,
                       ),
@@ -110,6 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.mail_rounded),
                           hintText: 'Email Address',
                           filled: true,
                           fillColor: Colors.grey.shade200,
@@ -132,6 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock_open_rounded),
                           hintText: 'Password',
                           filled: true,
                           fillColor: Colors.grey.shade200,
@@ -154,6 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock_rounded),
                           hintText: 'Confirm Password',
                           filled: true,
                           fillColor: Colors.grey.shade200,
