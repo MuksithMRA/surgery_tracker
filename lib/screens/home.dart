@@ -3,6 +3,8 @@ import 'package:surgery_tracker/models/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/screens/profile.dart';
 
+import '../widgets/custom_textfield.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -247,55 +249,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  SizedBox cardActionButtons() {
-    return SizedBox(
-      width: ScreenSize.width * 0.27,
-      child: ButtonBar(
-        alignment: MainAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const ShapeDecoration(
-                color: Color(0xfff0ad4e),
-                shape: CircleBorder(
-                  side: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                ),
-              ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const ShapeDecoration(
-                color: Colors.red,
-                shape: CircleBorder(
-                  side: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                ),
-              ),
-              child: const Icon(
-                Icons.delete,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget cardSubItem(String title, String subtitle, {double? width}) {
     TextStyle titleStyle = const TextStyle(
         color: Colors.white, fontSize: 12, fontWeight: FontWeight.w300);
@@ -323,7 +276,8 @@ class _HomeState extends State<Home> {
 
   Widget addSurgery() {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      scrollable: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       title: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -348,45 +302,50 @@ class _HomeState extends State<Home> {
             SizedBox(
               height: ScreenSize.height * 0.03,
             ),
-            TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+            CustomTextField(
+              hintText: 'Enter Surgery Name',
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Surgery Name Required";
                 }
                 return null;
               },
-              decoration: InputDecoration(
-                hintText: 'Enter Surgery Name',
-                filled: true,
-                fillColor: Colors.grey.shade200,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
             ),
             const SizedBox(
               height: 15,
             ),
-            TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+            CustomTextField(
+              hintText: 'BHT Number',
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "BHT Number Required";
                 }
                 return null;
               },
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: 'Enter BHT Number',
-                filled: true,
-                fillColor: Colors.grey.shade200,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            CustomTextField(
+              hintText: 'Consultant Name',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Consultant Name Required";
+                }
+                return null;
+              },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            CustomTextField(
+              hintText: 'Consultant Specialization',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Consultant Specialization Required";
+                }
+                return null;
+              },
             ),
           ],
         ),
