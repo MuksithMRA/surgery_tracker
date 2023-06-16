@@ -1,3 +1,4 @@
 class ApiEndPoint {
-  static const registerWithEmailApi = "/account";
+  static const registerWithEmail = "/account";
+  static const getAllDBUsers = "/account";
 }

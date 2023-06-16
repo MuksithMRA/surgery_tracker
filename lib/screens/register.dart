@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
+import 'package:surgery_tracker/widgets/custom_textfield.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import 'home.dart';
@@ -35,139 +36,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _key,
                   child: Column(
                     children: [
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      CustomTextField(
+                        prefixIcon: Icons.person_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "First Name Required";
                           }
                           return null;
                         },
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_rounded),
-                          hintText: 'First Name',
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                        hintText: 'First Name',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      CustomTextField(
+                        prefixIcon: Icons.person_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Last Name Required";
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_rounded),
-                          hintText: 'Last Name',
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                        hintText: 'Last Name',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      CustomTextField(
+                        prefixIcon: Icons.medication_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Speciality Required";
+                            return "Specialization Required";
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.medication_rounded),
-                          hintText: 'Speciality',
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                        hintText: 'Specialization',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      CustomTextField(
+                        prefixIcon: Icons.mail_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Email Address Required";
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.mail_rounded),
-                          hintText: 'Email Address',
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                        hintText: 'Email Address',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      CustomTextField(
+                        prefixIcon: Icons.lock_open_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Password Required";
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_open_rounded),
-                          hintText: 'Password',
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                        hintText: 'Password',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      CustomTextField(
+                        prefixIcon: Icons.lock_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Confirm Password Required";
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_rounded),
-                          hintText: 'Confirm Password',
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                        hintText: 'Confirm Password',
                       ),
                       const SizedBox(
                         height: 15,
