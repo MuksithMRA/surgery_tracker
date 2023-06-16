@@ -1,5 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:surgery_tracker/models/app_user.dart';
+import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/widgets/custom_textfield.dart';
@@ -15,6 +18,14 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  late AuthProvider pAuth;
+  @override
+  void initState() {
+    super.initState();
+    pAuth = context.read<AuthProvider>();
+    pAuth.setAppUser(AppUser());
+  }
+
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
