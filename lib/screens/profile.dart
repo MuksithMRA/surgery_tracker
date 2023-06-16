@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:surgery_tracker/models/screen_size.dart';
+import 'package:surgery_tracker/utils/screen_size.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

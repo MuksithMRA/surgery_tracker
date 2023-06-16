@@ -2,9 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:surgery_tracker/screens/home.dart';
 import 'package:surgery_tracker/screens/register.dart';
-import 'package:surgery_tracker/widgets/utils.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
-import '../models/screen_size.dart';
+import '../utils/screen_size.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Utils.logo(),
+              UtilWidgets.logo(),
               const SizedBox(
                 height: 25,
               ),

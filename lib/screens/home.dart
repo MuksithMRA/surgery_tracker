@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:surgery_tracker/models/screen_size.dart';
+import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/screens/profile.dart';
 

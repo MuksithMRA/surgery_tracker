@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/screen_size.dart';
+import '../utils/screen_size.dart';
 
-class Utils {
+class UtilWidgets {
   static Widget logo() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),

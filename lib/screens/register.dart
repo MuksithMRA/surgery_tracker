@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:surgery_tracker/models/screen_size.dart';
+import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
-import 'package:surgery_tracker/widgets/utils.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import 'home.dart';
 
@@ -241,7 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Row welcomeWidget() {
     return Row(
       children: [
-        Flexible(flex: 1, child: Utils.flexibleLogo()),
+        Flexible(flex: 1, child: UtilWidgets.flexibleLogo()),
         const SizedBox(
           width: 10,
         ),

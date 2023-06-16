@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:surgery_tracker/models/screen_size.dart';
+import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
-import 'package:surgery_tracker/widgets/utils.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Utils.logo(),
+            UtilWidgets.logo(),
             const SizedBox(
               height: 10,
             ),
