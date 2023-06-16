@@ -10,15 +10,17 @@ class AppUser {
   String password;
   String imageUrl;
   String specialization;
+  String documentID;
   AppUser({
     this.userId = '',
+    this.name = '',
     this.firstName = '',
     this.lastName = '',
-    this.name = '',
     this.email = '',
     this.password = '',
     this.imageUrl = '',
     this.specialization = '',
+    this.documentID = '',
   }) {
     name = '$firstName $lastName';
   }
@@ -32,7 +34,8 @@ class AppUser {
       'email': email,
       'password': password,
       'imageUrl': imageUrl,
-      'specialization': specialization
+      'specialization': specialization,
+      'documentId': documentID,
     };
   }
 
@@ -46,6 +49,7 @@ class AppUser {
       password: map['password'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       specialization: map['specialization'] ?? '',
+      documentID: map['documentId'] ?? '',
     );
   }
 

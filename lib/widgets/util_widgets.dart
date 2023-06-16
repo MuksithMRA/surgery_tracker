@@ -24,4 +24,12 @@ class UtilWidgets {
       ),
     );
   }
+
+  static showSnackBar(BuildContext context, String message, bool isError) {
+    final SnackBar snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: isError ? Colors.red : Colors.green,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:surgery_tracker/services/user_service.dart';
 
 import '../models/app_user.dart';
 import '../services/auth_service.dart';
@@ -7,6 +8,7 @@ import '../utils/utils.dart';
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   AppUser appUser = AppUser();
+  String confirmPassword = '';
   bool get isAuthenticated => _isAuthenticated;
 
   void login() {
@@ -20,8 +22,18 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> register() async {
-    await AuthService.register(appUser).then((response) {
-      debugPrint(response?.body.toString() ?? "Error ${response?.statusCode}");
+    setUserId(null);
+    await AuthService.register(appUser).then((response) async {
+      if (response != null) {
+        setDocumentId(null);
+        await UserService.addUser(appUser).then((response) {
+          debugPrint(
+              response?.body.toString() ?? "Error ${response?.statusCode}");
+        });
+      } else {
+        debugPrint(
+            response?.body.toString() ?? "Error ${response?.statusCode}");
+      }
     });
     return true;
   }
@@ -71,6 +83,20 @@ class AuthProvider extends ChangeNotifier {
     } else {
       appUser.userId = userId;
     }
+    notifyListeners();
+  }
+
+  void setDocumentId(String? docId) {
+    if (docId == null) {
+      appUser.documentID = Utils.generateUserID();
+    } else {
+      appUser.documentID = docId;
+    }
+    notifyListeners();
+  }
+
+  void setConfirmPassword(String confirmPassword) {
+    this.confirmPassword = confirmPassword;
     notifyListeners();
   }
 }

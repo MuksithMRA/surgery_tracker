@@ -6,6 +6,7 @@ import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/widgets/custom_textfield.dart';
+import 'package:surgery_tracker/widgets/loader_overlay.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import 'home.dart';
@@ -22,7 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    pAuth = context.read<AuthProvider>();
+    pAuth = Provider.of<AuthProvider>(context, listen: false);
     pAuth.setAppUser(AppUser());
   }
 
@@ -55,6 +56,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
+                        onChange: (value) {
+                          pAuth.setFirstName(value);
+                        },
                         hintText: 'First Name',
                       ),
                       const SizedBox(
@@ -67,6 +71,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             return "Last Name Required";
                           }
                           return null;
+                        },
+                        onChange: (value) {
+                          pAuth.setLastName(value);
                         },
                         hintText: 'Last Name',
                       ),
@@ -81,6 +88,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
+                        onChange: (value) {
+                          pAuth.setSpecialization(value);
+                        },
                         hintText: 'Specialization',
                       ),
                       const SizedBox(
@@ -94,12 +104,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
+                        onChange: (value) {
+                          pAuth.setEmail(value);
+                        },
                         hintText: 'Email Address',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
                       CustomTextField(
+                        obsecureText: true,
                         prefixIcon: Icons.lock_open_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -107,18 +121,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
+                        onChange: (value) {
+                          pAuth.setPassword(value);
+                        },
                         hintText: 'Password',
                       ),
                       const SizedBox(
                         height: 15,
                       ),
                       CustomTextField(
+                        obsecureText: true,
                         prefixIcon: Icons.lock_rounded,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Confirm Password Required";
+                          } else if (context
+                                  .read<AuthProvider>()
+                                  .appUser
+                                  .password !=
+                              value.trim()) {
+                            return "Passwords do not match";
                           }
                           return null;
+                        },
+                        onChange: (value) {
+                          pAuth.setConfirmPassword(value);
                         },
                         hintText: 'Confirm Password',
                       ),
@@ -137,10 +164,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )),
                         onPressed: () {
                           if (_key.currentState!.validate()) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const Home()));
+                            LoadingOverlay.of(context).during(
+                              pAuth.register().then(
+                                    (isSuccess) => {
+                                      if (isSuccess)
+                                        {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => const Home(),
+                                            ),
+                                          ),
+                                        }
+                                    },
+                                  ),
+                            );
                           }
                         },
                         child: const Text(
