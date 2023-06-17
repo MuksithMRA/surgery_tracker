@@ -137,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             return "Confirm Password Required";
                           } else if (context
                                   .read<AuthProvider>()
-                                  .appUser
+                                  .user
                                   .password !=
                               value.trim()) {
                             return "Passwords do not match";

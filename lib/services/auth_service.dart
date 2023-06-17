@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:surgery_tracker/models/app_user.dart';
+import 'package:surgery_tracker/models/auth_user.dart';
 import 'package:surgery_tracker/utils/utils.dart';
 
 import '../constants/api_endpoint.dart';
@@ -11,7 +11,7 @@ class AuthService {
     await http.post(Uri.parse("${Enviornment.apiUrl}/account"), body: {});
   }
 
-  static Future<http.Response?> register(AppUser registerDto) async {
+  static Future<http.Response?> register(AuthUser registerDto) async {
     try {
       return await http.post(
         Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.registerWithEmail}"),

@@ -14,19 +14,19 @@ class Utils {
     return headers;
   }
 
-  static String generateUserID() {
+  static String generateRandomID() {
     const validChars =
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_';
     const maxChars = 36;
 
     Random random = Random();
-    String userID = '';
+    String randomID = '';
     String firstChar = validChars[random.nextInt(validChars.length)];
-    userID += firstChar;
+    randomID += firstChar;
     for (int i = 0; i < maxChars - 1; i++) {
       String char = validChars[random.nextInt(validChars.length)];
-      userID += char;
+      randomID += char;
     }
-    return userID;
+    return randomID;
   }
 }

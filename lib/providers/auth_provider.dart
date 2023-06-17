@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:surgery_tracker/models/auth_user.dart';
 import 'package:surgery_tracker/services/user_service.dart';
 
 import '../models/app_user.dart';
@@ -7,7 +10,7 @@ import '../utils/utils.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
-  AppUser appUser = AppUser();
+  AuthUser user = AuthUser();
   String confirmPassword = '';
   bool get isAuthenticated => _isAuthenticated;
 
@@ -23,74 +26,81 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> register() async {
     setUserId(null);
-    await AuthService.register(appUser).then((response) async {
+    await AuthService.register(user).then((response) async {
       if (response != null) {
         setDocumentId(null);
-        await UserService.addUser(appUser).then((response) {
-          debugPrint(
-              response?.body.toString() ?? "Error ${response?.statusCode}");
-        });
+        var res = jsonDecode(response.body);
+        debugPrint(response.body.toString());
+        if (res['code'] == 200) {
+          user.appUser.userId = res['id'];
+          await UserService.addUser(user.appUser).then((response) {
+            debugPrint(
+                response?.body.toString() ?? "Error ${response?.statusCode}");
+            return true;
+          });
+        }
       } else {
         debugPrint(
             response?.body.toString() ?? "Error ${response?.statusCode}");
       }
     });
-    return true;
+    return false;
   }
 
   void setAppUser(AppUser appUser) {
-    this.appUser = appUser;
+    user.appUser = appUser;
   }
 
   void setEmail(String email) {
-    appUser.email = email;
+    user.email = email;
     notifyListeners();
   }
 
   void setPassword(String password) {
-    appUser.password = password;
+    user.password = password;
     notifyListeners();
   }
 
   void setFirstName(String firstName) {
-    appUser.firstName = firstName;
+    user.appUser.firstName = firstName;
     notifyListeners();
   }
 
   void setLastName(String lastName) {
-    appUser.lastName = lastName;
+    user.appUser.lastName = lastName;
     notifyListeners();
   }
 
   void setSpecialization(String specialization) {
-    appUser.specialization = specialization;
+    user.appUser.specialization = specialization;
     notifyListeners();
   }
 
   void setName(String name) {
-    appUser.name = name;
+    user.name = name;
     notifyListeners();
   }
 
   void setImageUrl(String imageUrl) {
-    appUser.imageUrl = imageUrl;
+    user.appUser.imageUrl = imageUrl;
     notifyListeners();
   }
 
   void setUserId(String? userId) {
     if (userId == null) {
-      appUser.userId = Utils.generateUserID();
+      user.userId = Utils.generateRandomID();
     } else {
-      appUser.userId = userId;
+      user.userId = userId;
     }
+    user.appUser.userId = user.userId;
     notifyListeners();
   }
 
   void setDocumentId(String? docId) {
     if (docId == null) {
-      appUser.documentID = Utils.generateUserID();
+      user.appUser.documentID = Utils.generateRandomID();
     } else {
-      appUser.documentID = docId;
+      user.appUser.documentID = docId;
     }
     notifyListeners();
   }

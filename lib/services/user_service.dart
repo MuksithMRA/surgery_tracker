@@ -10,6 +10,8 @@ import '../utils/utils.dart';
 
 class UserService {
   static Future<http.Response?> addUser(AppUser userDTO) async {
+    debugPrint(jsonEncode(
+        {"data": userDTO.toJson(), "documentId": userDTO.documentID}));
     try {
       return await http.post(
         Uri.parse(
