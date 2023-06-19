@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:surgery_tracker/constants/storage_keys.dart';
 import 'package:surgery_tracker/models/auth_user.dart';
-import 'package:surgery_tracker/services/user_service.dart';
 
 import '../models/app_user.dart';
 import '../services/auth_service.dart';
+import '../services/user_service.dart';
 import '../utils/utils.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -14,9 +17,26 @@ class AuthProvider extends ChangeNotifier {
   String confirmPassword = '';
   bool get isAuthenticated => _isAuthenticated;
 
-  void login() {
+  Future<bool> login() async {
     _isAuthenticated = true;
     notifyListeners();
+    Response? loginResponse = await AuthService.login(user);
+    if (loginResponse != null) {
+      Map loginResBody = jsonDecode(loginResponse.body);
+      if (!loginResBody.containsKey('code')) {
+        debugPrint(loginResponse.body.toString());
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString(StorageKeys.sessionID, loginResBody["\$id"]);
+        prefs.setString(StorageKeys.userId, loginResBody["userId"]);
+        return true;
+      } else {
+        debugPrint(loginResponse.body.toString());
+        return false;
+      }
+    } else {
+      debugPrint(loginResponse?.body.toString());
+      return false;
+    }
   }
 
   void logout() {
@@ -26,25 +46,29 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> register() async {
     setUserId(null);
-    await AuthService.register(user).then((response) async {
-      if (response != null) {
-        setDocumentId(null);
-        var res = jsonDecode(response.body);
-        debugPrint(response.body.toString());
-        if (res['code'] == 200) {
-          user.appUser.userId = res['id'];
-          await UserService.addUser(user.appUser).then((response) {
-            debugPrint(
-                response?.body.toString() ?? "Error ${response?.statusCode}");
-            return true;
-          });
+    Response? response = await AuthService.register(user);
+    if (response != null) {
+      setDocumentId(null);
+      Map res = jsonDecode(response.body);
+      debugPrint(response.body.toString());
+      if (!res.containsKey('code') && res['status']) {
+        response = await UserService.addUser(user.appUser);
+        if (response != null) {
+          debugPrint(jsonEncode(response.body));
+          user = AuthUser();
+          notifyListeners();
+          return true;
+        } else {
+          return false;
         }
       } else {
-        debugPrint(
-            response?.body.toString() ?? "Error ${response?.statusCode}");
+        debugPrint("${res["message"]} ${res["code]"]}");
+        return false;
       }
-    });
-    return false;
+    } else {
+      debugPrint("Error$response");
+      return false;
+    }
   }
 
   void setAppUser(AppUser appUser) {
@@ -89,6 +113,7 @@ class AuthProvider extends ChangeNotifier {
   void setUserId(String? userId) {
     if (userId == null) {
       user.userId = Utils.generateRandomID();
+      user.appUser.userId = user.userId;
     } else {
       user.userId = userId;
     }

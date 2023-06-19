@@ -9,8 +9,6 @@ import 'package:surgery_tracker/widgets/custom_textfield.dart';
 import 'package:surgery_tracker/widgets/loader_overlay.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
 
-import 'home.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -162,23 +160,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ScreenSize.height * 0.065,
                               ),
                             )),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_key.currentState!.validate()) {
-                            LoadingOverlay.of(context).during(
-                              pAuth.register().then(
-                                    (isSuccess) => {
-                                      if (isSuccess)
-                                        {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => const Home(),
-                                            ),
-                                          ),
-                                        }
-                                    },
-                                  ),
-                            );
+                            bool isSuccess = await LoadingOverlay.of(context)
+                                .during(pAuth.register());
+                            if (isSuccess && mounted) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
+                              );
+                            }
                           }
                         },
                         child: const Text(

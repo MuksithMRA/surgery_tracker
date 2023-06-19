@@ -6,6 +6,7 @@ class AuthUser {
   String name;
   String email;
   String password;
+
   AppUser appUser = AppUser();
   AuthUser({
     this.userId = '',
@@ -29,6 +30,13 @@ class AuthUser {
     };
   }
 
+  Map<String, dynamic> toLoginMap() {
+    return <String, dynamic>{
+      'email': email,
+      'password': password,
+    };
+  }
+
   factory AuthUser.fromMap(Map<String, dynamic> map) {
     return AuthUser(
       userId: map['userId'] as String,
@@ -39,6 +47,7 @@ class AuthUser {
   }
 
   String toJson() => json.encode(toMap());
+  String toLoginJson() => json.encode(toLoginMap());
 
   factory AuthUser.fromJson(String source) =>
       AuthUser.fromMap(json.decode(source) as Map<String, dynamic>);

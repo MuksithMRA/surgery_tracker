@@ -1,9 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:surgery_tracker/screens/home.dart';
 import 'package:surgery_tracker/screens/register.dart';
+import 'package:surgery_tracker/widgets/custom_textfield.dart';
+import 'package:surgery_tracker/widgets/loader_overlay.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
 
+import '../providers/auth_provider.dart';
 import '../utils/screen_size.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,6 +19,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  late AuthProvider pAuth;
+
+  @override
+  void initState() {
+    super.initState();
+    pAuth = Provider.of<AuthProvider>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,47 +51,33 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 15,
               ),
-              TextFormField(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+              CustomTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Email Address Required";
                   }
                   return null;
                 },
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: 'Email Address',
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
+                onChange: (value) {
+                  pAuth.setEmail(value);
+                },
+                hintText: 'Email Address',
               ),
               const SizedBox(
                 height: 10,
               ),
-              TextFormField(
-                obscureText: true,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+              CustomTextField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Password Required";
                   }
                   return null;
                 },
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
+                obsecureText: true,
+                hintText: 'Password',
+                onChange: (value) {
+                  pAuth.setPassword(value);
+                },
               ),
               const SizedBox(
                 height: 20,
@@ -93,10 +91,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         ScreenSize.height * 0.065,
                       ),
                     )),
-                onPressed: () {
+                onPressed: () async {
                   if (_key.currentState!.validate()) {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (_) => const Home()));
+                    bool isSuccess =
+                        await LoadingOverlay.of(context).during(pAuth.login());
+                    if (isSuccess && mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const Home(),
+                        ),
+                      );
+                    }
                   }
                 },
                 child: const Text(
