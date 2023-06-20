@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
+import 'package:surgery_tracker/providers/user_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/screens/profile.dart';
@@ -20,11 +21,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   late AuthProvider pAuth;
+  late UserProvider pUser;
 
   @override
   void initState() {
     super.initState();
     pAuth = Provider.of<AuthProvider>(context, listen: false);
+    pUser = Provider.of<UserProvider>(context, listen: false);
+    Future.delayed(Duration.zero, () => initialize());
+  }
+
+  Future<void> initialize() async {
+    await LoadingOverlay.of(context).during(pUser.getProfilePic());
   }
 
   @override
