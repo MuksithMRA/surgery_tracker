@@ -26,4 +26,18 @@ class UserService {
     }
     return null;
   }
+
+  static Future<http.Response?> getUsers() async {
+    try {
+      return await http.get(
+        Uri.parse(
+          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.userCollection)}",
+        ),
+        headers: Utils.header(true),
+      );
+    } on Exception catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/screens/home.dart';
 import 'package:surgery_tracker/screens/register.dart';
 import 'package:surgery_tracker/widgets/custom_textfield.dart';
@@ -102,6 +103,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           builder: (_) => const Home(),
                         ),
                       );
+                    } else {
+                      UtilWidgets.showSnackBar(
+                          context, ErrorModel.errorMessage, true);
                     }
                   }
                 },

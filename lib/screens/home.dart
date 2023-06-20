@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:surgery_tracker/models/error_model.dart';
+import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/screens/profile.dart';
+import 'package:surgery_tracker/widgets/loader_overlay.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import '../widgets/custom_textfield.dart';
 
@@ -14,6 +19,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  late AuthProvider pAuth;
+
+  @override
+  void initState() {
+    super.initState();
+    pAuth = Provider.of<AuthProvider>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,10 +34,11 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.white,
         onPressed: () {
           showDialog(
-              context: context,
-              useSafeArea: true,
-              barrierDismissible: false,
-              builder: (_) => addSurgery());
+            context: context,
+            useSafeArea: true,
+            barrierDismissible: false,
+            builder: (_) => addSurgery(),
+          );
         },
         icon: const Icon(
           Icons.add,
@@ -84,9 +98,18 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()));
+              onPressed: () async {
+                bool isLoggedOut =
+                    await LoadingOverlay.of(context).during(pAuth.logout());
+                if (mounted) {
+                  if (isLoggedOut) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()));
+                  } else {
+                    UtilWidgets.showSnackBar(
+                        context, ErrorModel.errorMessage, true);
+                  }
+                }
               },
               child: const Row(
                 children: [

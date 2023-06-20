@@ -25,10 +25,21 @@ class AuthProvider extends ChangeNotifier {
     if (loginResponse != null) {
       Map loginResBody = jsonDecode(loginResponse.body);
       if (!loginResBody.containsKey('code')) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(StorageKeys.sessionID, loginResBody["\$id"]);
-        prefs.setString(StorageKeys.userId, loginResBody["userId"]);
-        return true;
+        Response? userResponse = await UserService.getUsers();
+        if (userResponse != null) {
+          List<dynamic> userResponseBody =
+              jsonDecode(userResponse.body)["documents"];
+          var user = userResponseBody.firstWhere(
+              (element) => element['userId'] == loginResBody['userId']);
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString(StorageKeys.sessionID, loginResBody["\$id"]);
+          prefs.setString(StorageKeys.userId, loginResBody["userId"]);
+          prefs.setString(StorageKeys.profilePicID, user["imageUrl"]);
+          return true;
+        } else {
+          return false;
+        }
       } else {
         ErrorModel.errorMessage = loginResBody['message'];
         return false;
@@ -38,9 +49,19 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  void logout() {
+  Future<bool> logout() async {
     _isAuthenticated = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Response? response = await AuthService.destroySession(
+        prefs.getString(StorageKeys.sessionID)!);
+    if (response != null) {
+      debugPrint(response.body);
+      await prefs.remove(StorageKeys.sessionID);
+      await prefs.remove(StorageKeys.userId);
+      await prefs.remove(StorageKeys.profilePicID);
+    }
     notifyListeners();
+    return true;
   }
 
   Future<bool> register(BuildContext context) async {
