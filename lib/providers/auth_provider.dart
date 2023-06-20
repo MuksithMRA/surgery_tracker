@@ -25,17 +25,15 @@ class AuthProvider extends ChangeNotifier {
     if (loginResponse != null) {
       Map loginResBody = jsonDecode(loginResponse.body);
       if (!loginResBody.containsKey('code')) {
-        debugPrint(loginResponse.body.toString());
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString(StorageKeys.sessionID, loginResBody["\$id"]);
         prefs.setString(StorageKeys.userId, loginResBody["userId"]);
         return true;
       } else {
-        debugPrint(loginResponse.body.toString());
+        ErrorModel.errorMessage = loginResBody['message'];
         return false;
       }
     } else {
-      debugPrint(loginResponse?.body.toString());
       return false;
     }
   }
@@ -62,7 +60,6 @@ class AuthProvider extends ChangeNotifier {
             return true;
           } else {
             ErrorModel.errorMessage = responseBody['message'];
-
             return false;
           }
         } else {
