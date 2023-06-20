@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/models/app_user.dart';
+import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
@@ -163,7 +164,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onPressed: () async {
                           if (_key.currentState!.validate()) {
                             bool isSuccess = await LoadingOverlay.of(context)
-                                .during(pAuth.register());
+                                .during(pAuth.register(context));
                             if (isSuccess && mounted) {
                               Navigator.pushReplacement(
                                 context,
@@ -171,6 +172,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   builder: (_) => const LoginScreen(),
                                 ),
                               );
+                            } else {
+                              UtilWidgets.showSnackBar(
+                                  context, ErrorModel.errorMessage, true);
                             }
                           }
                         },

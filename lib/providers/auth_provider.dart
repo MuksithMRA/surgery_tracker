@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:surgery_tracker/constants/storage_keys.dart';
 import 'package:surgery_tracker/models/auth_user.dart';
+import 'package:surgery_tracker/models/error_model.dart';
 
 import '../models/app_user.dart';
 import '../services/auth_service.dart';
@@ -44,29 +45,34 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> register() async {
-    setUserId(null);
+  Future<bool> register(BuildContext context) async {
+    setUserId();
     Response? response = await AuthService.register(user);
     if (response != null) {
-      setDocumentId(null);
+      setDocumentId();
       Map res = jsonDecode(response.body);
-      debugPrint(response.body.toString());
       if (!res.containsKey('code') && res['status']) {
+        setName();
         response = await UserService.addUser(user.appUser);
         if (response != null) {
-          debugPrint(jsonEncode(response.body));
-          user = AuthUser();
-          notifyListeners();
-          return true;
+          Map<String, dynamic> responseBody = jsonDecode(response.body);
+          if (!res.containsKey('code')) {
+            user = AuthUser();
+            notifyListeners();
+            return true;
+          } else {
+            ErrorModel.errorMessage = responseBody['message'];
+
+            return false;
+          }
         } else {
           return false;
         }
       } else {
-        debugPrint("${res["message"]} ${res["code]"]}");
+        ErrorModel.errorMessage = res['message'];
         return false;
       }
     } else {
-      debugPrint("Error$response");
       return false;
     }
   }
@@ -100,7 +106,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setName(String name) {
+  void setName({String? name}) {
+    name ??= "${user.appUser.firstName} ${user.appUser.lastName}";
     user.name = name;
     notifyListeners();
   }
@@ -110,7 +117,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setUserId(String? userId) {
+  void setUserId({String? userId}) {
     if (userId == null) {
       user.userId = Utils.generateRandomID();
       user.appUser.userId = user.userId;
@@ -121,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setDocumentId(String? docId) {
+  void setDocumentId({String? docId}) {
     if (docId == null) {
       user.appUser.documentID = Utils.generateRandomID();
     } else {
