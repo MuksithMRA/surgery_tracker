@@ -56,6 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Email Address Required";
+                  } else if (!(value.contains('@') && value.contains('.'))) {
+                    return "Invalid Email Address";
                   }
                   return null;
                 },
