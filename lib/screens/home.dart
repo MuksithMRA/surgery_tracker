@@ -180,75 +180,83 @@ class _HomeState extends State<Home> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      ...List.generate(
-                        surgery.surgeries.length,
-                        (index) {
-                          SurgeryModel surgeryModel = surgery.surgeries[index];
-                          return Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(20),
+                      if (surgery.surgeries.isNotEmpty)
+                        ...List.generate(
+                          surgery.surgeries.length,
+                          (index) {
+                            SurgeryModel surgeryModel =
+                                surgery.surgeries[index];
+                            return Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  width: ScreenSize.width,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5),
+                                        child: Row(
+                                          children: [
+                                            cardSubItem(
+                                              "Consultant Name",
+                                              surgeryModel.consultantName,
+                                              width: ScreenSize.width * 0.8,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5),
+                                        child: Row(
+                                          children: [
+                                            cardSubItem(
+                                                "Date",
+                                                DateFormat.yMd().format(
+                                                    surgeryModel.date!)),
+                                            cardSubItem(
+                                                "Done By", surgeryModel.doneBy),
+                                            cardActionButton("E"),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5),
+                                        child: Row(
+                                          children: [
+                                            cardSubItem("Surgery",
+                                                surgeryModel.surgeryName),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            cardSubItem(
+                                                "BHT", surgeryModel.bht),
+                                            cardActionButton("D"),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                width: ScreenSize.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      child: Row(
-                                        children: [
-                                          cardSubItem(
-                                            "Consultant Name",
-                                            surgeryModel.consultantName,
-                                            width: ScreenSize.width * 0.8,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      child: Row(
-                                        children: [
-                                          cardSubItem(
-                                              "Date",
-                                              DateFormat.yMd()
-                                                  .format(surgeryModel.date!)),
-                                          cardSubItem(
-                                              "Done By", surgeryModel.doneBy),
-                                          cardActionButton("E"),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      child: Row(
-                                        children: [
-                                          cardSubItem("Surgery",
-                                              surgeryModel.surgeryName),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          cardSubItem("BHT", surgeryModel.bht),
-                                          cardActionButton("D"),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                              ],
+                            );
+                          },
+                        )
+                      else
+                        const Center(
+                          child: Text("No Surgeries Found"),
+                        )
                     ],
                   ),
                 ),
