@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/models/error_model.dart';
+import 'package:surgery_tracker/models/surgery_model.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
+import 'package:surgery_tracker/providers/surgery_provider.dart';
 import 'package:surgery_tracker/providers/user_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
@@ -20,19 +23,30 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+
   late AuthProvider pAuth;
   late UserProvider pUser;
+  late SurgeryProvider pSurgery;
 
   @override
   void initState() {
     super.initState();
     pAuth = Provider.of<AuthProvider>(context, listen: false);
     pUser = Provider.of<UserProvider>(context, listen: false);
-    Future.delayed(Duration.zero, () => initialize());
+    pSurgery = Provider.of<SurgeryProvider>(context, listen: false);
+
+    Future.delayed(Duration.zero, () async {
+      await initialize();
+    });
   }
 
   Future<void> initialize() async {
-    await LoadingOverlay.of(context).during(pUser.getProfilePic());
+    // await LoadingOverlay.of(context).during(pUser.getProfilePic());
+    bool isSuccess =
+        await LoadingOverlay.of(context).during(pSurgery.getAllSurgeries());
+    if (!isSuccess && mounted) {
+      UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
+    }
   }
 
   @override
@@ -135,106 +149,114 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Flexible(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      suffixIcon: const Icon(Icons.search),
-                      hintText: 'Enter Doctor ID or Surgery Name',
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
+      body: Consumer<SurgeryProvider>(builder: (context, surgery, child) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        suffixIcon: const Icon(Icons.search),
+                        hintText: 'Enter Doctor ID or Surgery Name',
+                        filled: true,
+                        fillColor: Colors.grey.shade200,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    ...List.generate(
-                      10,
-                      (index) {
-                        return Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              width: ScreenSize.width,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: Row(
-                                      children: [
-                                        cardSubItem(
-                                          "Consultant Name",
-                                          "Dr. John Doe",
-                                          width: ScreenSize.width * 0.8,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: Row(
-                                      children: [
-                                        cardSubItem("Date", "2018-12-12"),
-                                        cardSubItem("Done By", "VOG"),
-                                        cardActionButton("E"),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: Row(
-                                      children: [
-                                        cardSubItem("Surgery", "TAH+BSO"),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        cardSubItem("BHT", "14289"),
-                                        cardActionButton("D"),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
-          )
-        ],
-      ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      ...List.generate(
+                        surgery.surgeries.length,
+                        (index) {
+                          SurgeryModel surgeryModel = surgery.surgeries[index];
+                          return Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                width: ScreenSize.width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child: Row(
+                                        children: [
+                                          cardSubItem(
+                                            "Consultant Name",
+                                            surgeryModel.consultantName,
+                                            width: ScreenSize.width * 0.8,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child: Row(
+                                        children: [
+                                          cardSubItem(
+                                              "Date",
+                                              DateFormat.yMd()
+                                                  .format(surgeryModel.date!)),
+                                          cardSubItem(
+                                              "Done By", surgeryModel.doneBy),
+                                          cardActionButton("E"),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child: Row(
+                                        children: [
+                                          cardSubItem("Surgery",
+                                              surgeryModel.surgeryName),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          cardSubItem("BHT", surgeryModel.bht),
+                                          cardActionButton("D"),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      }),
     );
   }
 
@@ -335,6 +357,7 @@ class _HomeState extends State<Home> {
             ),
             CustomTextField(
               hintText: 'Enter Surgery Name',
+              onChange: (value) => pSurgery.setSurgeryName(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Surgery Name Required";
@@ -347,6 +370,7 @@ class _HomeState extends State<Home> {
             ),
             CustomTextField(
               hintText: 'BHT Number',
+              onChange: (value) => pSurgery.setBHTNumber(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "BHT Number Required";
@@ -359,6 +383,7 @@ class _HomeState extends State<Home> {
             ),
             CustomTextField(
               hintText: 'Consultant Name',
+              onChange: (value) => pSurgery.setConsultantName(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Consultant Name Required";
@@ -371,6 +396,7 @@ class _HomeState extends State<Home> {
             ),
             CustomTextField(
               hintText: 'Consultant Specialization',
+              onChange: (value) => pSurgery.setConsultantSpecialization(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Consultant Specialization Required";
@@ -391,8 +417,16 @@ class _HomeState extends State<Home> {
                   ScreenSize.height * 0.065,
                 ),
               )),
-          onPressed: () {
-            if (_key.currentState!.validate()) {}
+          onPressed: () async {
+            if (_key.currentState!.validate()) {
+              bool isSuccess = await LoadingOverlay.of(context)
+                  .during(pSurgery.saveSurgery());
+              if (isSuccess && mounted) {
+                Navigator.pop(context);
+                UtilWidgets.showSnackBar(
+                    context, "Surgery Added Successfully", false);
+              }
+            }
           },
           child: const Text(
             "Submit Record",

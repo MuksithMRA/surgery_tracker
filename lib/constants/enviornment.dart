@@ -13,4 +13,8 @@ class Enviornment {
     name: "users",
     code: "648c7b31156552300e20",
   );
+  static final EntityModel surgeryCollection = EntityModel(
+    name: "surgeries",
+    code: "64931d96022fc82561d9",
+  );
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/providers/providers.dart';
-import 'package:surgery_tracker/screens/splash.dart';
+
+import 'screens/splash.dart';
 
 void main() {
   runApp(MultiProvider(providers: providers, child: const MyApp()));
