@@ -13,10 +13,16 @@ class SurgeryProvider extends ChangeNotifier {
   SurgeryModel surgeryModel = SurgeryModel();
 
   Future<bool> getAllSurgeries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     Response? response = await SurgeryServices.getAllSurgeries();
     if (response != null && response.statusCode == 200) {
       List<dynamic> res = jsonDecode(response.body)['documents'];
-      surgeries = res.map((e) => SurgeryModel.fromJson(jsonEncode(e))).toList();
+      surgeries = res
+          .map((e) => SurgeryModel.fromJson(jsonEncode(e)))
+          .where((element) =>
+              element.userId == prefs.getString(StorageKeys.userId)!)
+          .toList();
       notifyListeners();
       return true;
     } else {
