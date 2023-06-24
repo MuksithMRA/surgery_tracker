@@ -34,7 +34,7 @@ class SurgeryProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setDocumentId();
     await getAllSurgeries();
-    int id = surgeries.last.id;
+    int id = surgeries.isNotEmpty ? surgeries.last.id : 1;
     setId(id += 1);
     setCurrentDate();
     seUserId(prefs.getString(StorageKeys.userId)!);
@@ -48,8 +48,24 @@ class SurgeryProvider extends ChangeNotifier {
     }
   }
 
-  setDocumentId() {
-    surgeryModel.documentID = Utils.generateRandomID();
+  Future<bool> deleteSurgery(String documentID) async {
+    Response? response = await SurgeryServices.deleteSurgery(documentID);
+    if (response != null && response.statusCode == 204) {
+      //  var res = jsonDecode(response.body);
+      debugPrint(response.body);
+      await getAllSurgeries();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  setDocumentId({String? documemntID}) {
+    if (documemntID != null) {
+      surgeryModel.documentID = documemntID;
+    } else {
+      surgeryModel.documentID = Utils.generateRandomID();
+    }
     notifyListeners();
   }
 

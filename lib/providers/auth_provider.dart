@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -35,7 +36,7 @@ class AuthProvider extends ChangeNotifier {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString(StorageKeys.sessionID, loginResBody["\$id"]);
           prefs.setString(StorageKeys.userId, loginResBody["userId"]);
-          prefs.setString(StorageKeys.profilePicID, user["imageUrl"]);
+          prefs.setString(StorageKeys.profilePic, user["profileImage"]);
           return true;
         } else {
           return false;
@@ -58,7 +59,7 @@ class AuthProvider extends ChangeNotifier {
       debugPrint(response.body);
       await prefs.remove(StorageKeys.sessionID);
       await prefs.remove(StorageKeys.userId);
-      await prefs.remove(StorageKeys.profilePicID);
+      await prefs.remove(StorageKeys.profilePic);
     }
     notifyListeners();
     return true;
@@ -72,6 +73,7 @@ class AuthProvider extends ChangeNotifier {
       Map res = jsonDecode(response.body);
       if (!res.containsKey('code') && res['status']) {
         setName();
+        setProfileImage();
         response = await UserService.addUser(user.appUser);
         if (response != null) {
           Map<String, dynamic> responseBody = jsonDecode(response.body);
@@ -101,6 +103,13 @@ class AuthProvider extends ChangeNotifier {
 
   void setEmail(String email) {
     user.email = email;
+    notifyListeners();
+  }
+
+  void setProfileImage({File? profileImage}) async {
+    profileImage ??= File("assets/images/doctor_avatar.png");
+    String profileImageBase64 = await Utils.imageToBase64(profileImage);
+    user.appUser.profileImage = profileImageBase64;
     notifyListeners();
   }
 

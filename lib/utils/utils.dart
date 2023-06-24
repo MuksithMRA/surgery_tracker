@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
 
 import '../constants/enviornment.dart';
 
@@ -28,5 +33,19 @@ class Utils {
       randomID += char;
     }
     return randomID;
+  }
+
+  static Future<String> imageToBase64(File image) async {
+    Uint8List bytes = await image.readAsBytes();
+    String base64Image = base64Encode(bytes);
+    return base64Image;
+  }
+
+  static Future<Image> base64ToImage(String base64) async {
+    Uint8List bytes = base64Decode(base64);
+    return Image.memory(
+      bytes,
+      fit: BoxFit.fill,
+    );
   }
 }

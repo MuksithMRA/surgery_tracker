@@ -23,6 +23,20 @@ class SurgeryServices {
     return null;
   }
 
+  static Future<Response?> deleteSurgery(String documentId) async {
+    try {
+      String api =
+          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.surgeryCollection)}/$documentId";
+      return await delete(
+        Uri.parse(api),
+        headers: Utils.header(true),
+      );
+    } on Exception catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
+
   static Future<Response?> addSurgery(SurgeryModel surgeryModel) async {
     try {
       return await post(

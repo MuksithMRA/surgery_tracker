@@ -42,6 +42,7 @@ class SurgeryModel {
       doneBy: map['doneBy'] as String,
       surgeryName: map['surgeryName'] as String,
       bht: map['bht'] as String,
+      documentID: map['\$id'] ?? '',
     );
   }
 

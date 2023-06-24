@@ -47,6 +47,9 @@ class _HomeState extends State<Home> {
     if (!isSuccess && mounted) {
       UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
     }
+    if (mounted) {
+      await LoadingOverlay.of(context).during(pUser.getProfilePic());
+    }
   }
 
   @override
@@ -101,9 +104,13 @@ class _HomeState extends State<Home> {
             },
             icon: Hero(
               tag: 'doctor_profile',
-              child: CircleAvatar(
-                foregroundColor: Theme.of(context).primaryColor,
-                backgroundImage: const AssetImage("assets/doctor_avatar.jpg"),
+              // child: CircleAvatar(
+              //   foregroundColor: Theme.of(context).primaryColor,
+              //   backgroundImage: const AssetImage("assets/doctor_avatar.jpg"),
+              // ),
+              child: Material(
+                shape: const CircleBorder(),
+                child: context.watch<UserProvider>().profilePic,
               ),
             ),
           ),
@@ -182,8 +189,13 @@ class _HomeState extends State<Home> {
                     children: [
                       if (surgery.surgeries.isNotEmpty)
                         ...List.generate(
-                          surgery.surgeries.length,
+                          surgery.surgeries.length + 1,
                           (index) {
+                            if (index == surgery.surgeries.length) {
+                              return SizedBox(
+                                height: ScreenSize.height * 0.06,
+                              );
+                            }
                             SurgeryModel surgeryModel =
                                 surgery.surgeries[index];
                             return Column(
@@ -223,7 +235,7 @@ class _HomeState extends State<Home> {
                                                     surgeryModel.date!)),
                                             cardSubItem(
                                                 "Done By", surgeryModel.doneBy),
-                                            cardActionButton("E"),
+                                            cardActionButton("E", surgeryModel),
                                           ],
                                         ),
                                       ),
@@ -239,7 +251,7 @@ class _HomeState extends State<Home> {
                                             ),
                                             cardSubItem(
                                                 "BHT", surgeryModel.bht),
-                                            cardActionButton("D"),
+                                            cardActionButton("D", surgeryModel),
                                           ],
                                         ),
                                       )
@@ -268,7 +280,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget cardActionButton(String action) {
+  Widget cardActionButton(String action, SurgeryModel model) {
     IconData icon = Icons.edit;
     String text = "Edit";
     Color color = const Color(0xfff39c12);
@@ -294,7 +306,47 @@ class _HomeState extends State<Home> {
           Colors.white,
         ),
       ),
-      onPressed: () {},
+      onPressed: () {
+        if (action == "D") {
+          showDialog(
+              context: context,
+              builder: (_) {
+                return AlertDialog(
+                  title: const Text("Delete Surgery"),
+                  content: const Text(
+                      "Are you sure you want to delete this surgery?"),
+                  actions: [
+                    TextButton(
+                      child: const Text('Yes'),
+                      onPressed: () async {
+                        if (mounted) {
+                          bool isSuccess = await LoadingOverlay.of(context)
+                              .during(pSurgery.deleteSurgery(model.documentID));
+                          if (mounted) {
+                            if (isSuccess) {
+                              Navigator.pop(context);
+                              UtilWidgets.showSnackBar(
+                                  context, "Deleted Successfully", false);
+                            } else {
+                              Navigator.pop(context);
+                              UtilWidgets.showSnackBar(
+                                  context, ErrorModel.errorMessage, false);
+                            }
+                          }
+                        }
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('No'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              });
+        } else {}
+      },
       child: Row(
         children: [
           Icon(
@@ -430,7 +482,9 @@ class _HomeState extends State<Home> {
               bool isSuccess = await LoadingOverlay.of(context)
                   .during(pSurgery.saveSurgery());
               if (isSuccess && mounted) {
-                Navigator.pop(context);
+                _key.currentState!.reset();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const Home()));
                 UtilWidgets.showSnackBar(
                     context, "Surgery Added Successfully", false);
               }
