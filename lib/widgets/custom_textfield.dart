@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final bool obsecureText;
   final String? initialValue;
+  final bool? isReadOnly;
   const CustomTextField({
     super.key,
     required this.hintText,
@@ -15,11 +16,13 @@ class CustomTextField extends StatelessWidget {
     this.obsecureText = false,
     this.prefixIcon,
     this.initialValue,
+    this.isReadOnly,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: isReadOnly ?? false,
       initialValue: initialValue,
       obscureText: obsecureText,
       onChanged: onChange,

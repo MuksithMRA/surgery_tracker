@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:surgery_tracker/constants/storage_keys.dart';
-import 'package:surgery_tracker/models/auth_user.dart';
-import 'package:surgery_tracker/models/error_model.dart';
 
+import '../constants/storage_keys.dart';
+import '../models/auth_user.dart';
+import '../models/error_model.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
 import '../utils/utils.dart';
@@ -16,6 +16,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   AuthUser user = AuthUser();
   String confirmPassword = '';
+  bool isVerificationCodeSent = false;
   bool get isAuthenticated => _isAuthenticated;
 
   Future<bool> login() async {
@@ -94,6 +95,11 @@ class AuthProvider extends ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  void setIsVerificationEmailSent(bool isSent) {
+    isVerificationCodeSent = isSent;
+    notifyListeners();
   }
 
   void setAuthUser(AuthUser authUser) {

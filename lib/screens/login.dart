@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/screens/home.dart';
 import 'package:surgery_tracker/screens/register.dart';
+import 'package:surgery_tracker/screens/verification.dart';
 import 'package:surgery_tracker/widgets/custom_textfield.dart';
 import 'package:surgery_tracker/widgets/loader_overlay.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
@@ -83,7 +84,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const VerificationPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Forgot Password",
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               ElevatedButton(
                 style: ButtonStyle(

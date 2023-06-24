@@ -44,4 +44,16 @@ class AuthService {
     }
     return null;
   }
+
+  static Future<http.Response?> verifyEmail(sessionId) async {
+    try {
+      return await http.delete(
+        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.sessions}/$sessionId"),
+        headers: Utils.header(false),
+      );
+    } on Exception catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
 }
