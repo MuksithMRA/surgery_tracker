@@ -345,7 +345,12 @@ class _HomeState extends State<Home> {
                   ],
                 );
               });
-        } else {}
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => addSurgery(surgery: model),
+          );
+        }
       },
       child: Row(
         children: [
@@ -387,22 +392,25 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget addSurgery() {
+  Widget addSurgery({SurgeryModel? surgery}) {
+    if (surgery != null) {
+      pSurgery.setSurgery(surgery);
+    }
     return AlertDialog(
       scrollable: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      title: const Column(
+      title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Add Your Surgery Record",
-            style: TextStyle(
+            "${surgery == null ? 'Add' : 'Update'} Your Surgery Record",
+            style: const TextStyle(
               fontSize: 25,
             ),
           ),
           Text(
-            "Please fill the form below",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            "Please ${surgery == null ? 'fill' : 'update'} the form below",
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
       ),
@@ -416,7 +424,8 @@ class _HomeState extends State<Home> {
               height: ScreenSize.height * 0.03,
             ),
             CustomTextField(
-              hintText: 'Enter Surgery Name',
+              hintText: 'Surgery Name',
+              initialValue: surgery?.surgeryName,
               onChange: (value) => pSurgery.setSurgeryName(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -430,6 +439,7 @@ class _HomeState extends State<Home> {
             ),
             CustomTextField(
               hintText: 'BHT Number',
+              initialValue: surgery?.bht,
               onChange: (value) => pSurgery.setBHTNumber(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -443,6 +453,7 @@ class _HomeState extends State<Home> {
             ),
             CustomTextField(
               hintText: 'Consultant Name',
+              initialValue: surgery?.consultantName,
               onChange: (value) => pSurgery.setConsultantName(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -455,6 +466,7 @@ class _HomeState extends State<Home> {
               height: 15,
             ),
             CustomTextField(
+              initialValue: surgery?.doneBy,
               hintText: 'Consultant Specialization',
               onChange: (value) => pSurgery.setConsultantSpecialization(value),
               validator: (value) {
@@ -479,14 +491,28 @@ class _HomeState extends State<Home> {
               )),
           onPressed: () async {
             if (_key.currentState!.validate()) {
-              bool isSuccess = await LoadingOverlay.of(context)
-                  .during(pSurgery.saveSurgery());
-              if (isSuccess && mounted) {
-                _key.currentState!.reset();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const Home()));
-                UtilWidgets.showSnackBar(
-                    context, "Surgery Added Successfully", false);
+              if (surgery != null) {
+                bool isSuccess = await LoadingOverlay.of(context)
+                    .during(pSurgery.editSurgery());
+                if (isSuccess && mounted) {
+                  _key.currentState!.reset();
+                  pSurgery.setSurgery(SurgeryModel());
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => const Home()));
+                  UtilWidgets.showSnackBar(
+                      context, "Surgery Updated Successfully", false);
+                }
+              } else {
+                bool isSuccess = await LoadingOverlay.of(context)
+                    .during(pSurgery.saveSurgery());
+                if (isSuccess && mounted) {
+                  _key.currentState!.reset();
+                  pSurgery.setSurgery(SurgeryModel());
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => const Home()));
+                  UtilWidgets.showSnackBar(
+                      context, "Surgery Added Successfully", false);
+                }
               }
             }
           },

@@ -37,6 +37,23 @@ class SurgeryServices {
     return null;
   }
 
+  static Future<Response?> editSurgery(SurgeryModel model) async {
+    try {
+      String api =
+          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.surgeryCollection)}/${model.documentID}";
+      return await patch(
+        Uri.parse(api),
+        body: jsonEncode({
+          "data": model.toJson(),
+        }),
+        headers: Utils.header(true),
+      );
+    } on Exception catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
+
   static Future<Response?> addSurgery(SurgeryModel surgeryModel) async {
     try {
       return await post(

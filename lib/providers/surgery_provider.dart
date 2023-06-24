@@ -60,6 +60,23 @@ class SurgeryProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> editSurgery() async {
+    Response? response = await SurgeryServices.editSurgery(surgeryModel);
+    if (response != null && response.statusCode == 200) {
+      //  var res = jsonDecode(response.body);
+      debugPrint(response.body);
+      await getAllSurgeries();
+      return true;
+    } else {
+      debugPrint(response?.body);
+      return false;
+    }
+  }
+
+  setSurgery(SurgeryModel surgery) {
+    surgeryModel = surgery;
+  }
+
   setDocumentId({String? documemntID}) {
     if (documemntID != null) {
       surgeryModel.documentID = documemntID;

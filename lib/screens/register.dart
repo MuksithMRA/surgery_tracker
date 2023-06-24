@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:surgery_tracker/models/app_user.dart';
+import 'package:surgery_tracker/models/auth_user.dart';
 import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
@@ -23,10 +23,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     pAuth = Provider.of<AuthProvider>(context, listen: false);
-    pAuth.setAppUser(AppUser());
+    pAuth.setAuthUser(AuthUser());
   }
 
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,6 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   builder: (_) => const LoginScreen(),
                                 ),
                               );
+                              pAuth.setAuthUser(AuthUser());
                             } else {
                               UtilWidgets.showSnackBar(
                                   context, ErrorModel.errorMessage, true);

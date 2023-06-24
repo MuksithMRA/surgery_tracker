@@ -6,23 +6,27 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onChange;
   final IconData? prefixIcon;
   final bool obsecureText;
-  const CustomTextField(
-      {super.key,
-      required this.hintText,
-      this.validator,
-      this.onChange,
-      this.obsecureText = false,
-      this.prefixIcon});
+  final String? initialValue;
+  const CustomTextField({
+    super.key,
+    required this.hintText,
+    this.validator,
+    this.onChange,
+    this.obsecureText = false,
+    this.prefixIcon,
+    this.initialValue,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
       obscureText: obsecureText,
       onChanged: onChange,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
       decoration: InputDecoration(
-        hintText: hintText,
+        labelText: hintText,
         filled: true,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
         fillColor: Colors.grey.shade200,

@@ -8,7 +8,6 @@ import 'package:surgery_tracker/constants/storage_keys.dart';
 import 'package:surgery_tracker/models/auth_user.dart';
 import 'package:surgery_tracker/models/error_model.dart';
 
-import '../models/app_user.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
 import '../utils/utils.dart';
@@ -97,8 +96,8 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  void setAppUser(AppUser appUser) {
-    user.appUser = appUser;
+  void setAuthUser(AuthUser authUser) {
+    user = authUser;
   }
 
   void setEmail(String email) {
