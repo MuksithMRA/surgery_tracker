@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:surgery_tracker/models/app_user.dart';
+import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/providers/user_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/utils/utils.dart';
 import 'package:surgery_tracker/widgets/loader_overlay.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,6 +18,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late UserProvider pUser;
+
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _specializationController =
+      TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -24,6 +32,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   initialize() async {
     await LoadingOverlay.of(context).during(pUser.getUser());
+  }
+
+  @override
+  void dispose() {
+    pUser.tempProfilePic = null;
+    pUser.tempProfilePicFile = null;
+    pUser.user = AppUser();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _specializationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -102,16 +121,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             trailing: const Icon(Icons.edit),
                             children: [
                               TextFormField(
+                                controller: _firstNameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "First Name Required";
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (_firstNameController
+                                          .text.isNotEmpty) {
+                                        pUser.setFirstName(
+                                            _firstNameController.text.trim());
+                                        updateProfile();
+                                      }
+                                    },
                                     icon: const Icon(Icons.send),
                                   ),
                                   hintText: 'First Name',
@@ -140,16 +166,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             trailing: const Icon(Icons.edit),
                             children: [
                               TextFormField(
+                                controller: _lastNameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "Last Name Required";
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (_lastNameController.text.isNotEmpty) {
+                                        pUser.setLastName(
+                                            _lastNameController.text.trim());
+                                        updateProfile();
+                                      }
+                                    },
                                     icon: const Icon(Icons.send),
                                   ),
                                   hintText: 'Last Name',
@@ -178,16 +210,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             trailing: const Icon(Icons.edit),
                             children: [
                               TextFormField(
+                                controller: _specializationController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "Speciality Required";
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (_specializationController
+                                          .text.isNotEmpty) {
+                                        pUser.setSpecialization(
+                                            _specializationController.text
+                                                .trim());
+                                        updateProfile();
+                                      }
+                                    },
                                     icon: const Icon(Icons.send),
                                   ),
                                   hintText: 'Enter Speciality',
@@ -235,58 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           right: 0,
           child: GestureDetector(
             onTap: () async {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (_) {
-                    return Container(
-                      height: ScreenSize.height * 0.2,
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Choose Image source",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(
-                                  Icons.close_rounded,
-                                ),
-                              )
-                            ],
-                          ),
-                          ListTile(
-                            onTap: () async {
-                              await showPreviewDialog(ImageSource.camera);
-                            },
-                            leading: const Icon(
-                              Icons.camera_alt_rounded,
-                            ),
-                            title: const Text("Take a photo"),
-                          ),
-                          ListTile(
-                            onTap: () async {
-                              await showPreviewDialog(ImageSource.gallery);
-                            },
-                            leading: const Icon(
-                              Icons.image_rounded,
-                            ),
-                            title: const Text("Choose from Gallery"),
-                          ),
-                        ],
-                      ),
-                    );
-                  });
+              await imageSourceOptionsDialog(context);
             },
             child: const CircleAvatar(
               child: Icon(
@@ -297,6 +286,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Future<dynamic> imageSourceOptionsDialog(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Container(
+          height: ScreenSize.height * 0.22,
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Choose Image source",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close_rounded,
+                    ),
+                  )
+                ],
+              ),
+              ListTile(
+                onTap: () async {
+                  await showPreviewDialog(ImageSource.camera);
+                },
+                leading: const Icon(
+                  Icons.camera_alt_rounded,
+                ),
+                title: const Text("Take a photo"),
+              ),
+              ListTile(
+                onTap: () async {
+                  await showPreviewDialog(ImageSource.gallery);
+                },
+                leading: const Icon(
+                  Icons.image_rounded,
+                ),
+                title: const Text("Choose from Gallery"),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -311,7 +356,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       actions: [
         ElevatedButton(
-            onPressed: () {}, child: const Text("Set as Profile picture")),
+          onPressed: () async {
+            await pUser.setProfilePic();
+            updateProfile();
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          },
+          child: const Text("Set as Profile picture"),
+        ),
         TextButton(
           onPressed: () {
             Navigator.pop(context);
@@ -320,6 +373,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> updateProfile() async {
+    if (mounted) {
+      bool isSuccess =
+          await LoadingOverlay.of(context).during(pUser.editUser());
+      if (mounted) {
+        if (isSuccess) {
+          UtilWidgets.showSnackBar(
+              context, "Profile Updated SuccessFully", false);
+        } else {
+          UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
+        }
+      }
+    }
   }
 
   showPreviewDialog(ImageSource source) async {

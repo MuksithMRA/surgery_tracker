@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -13,6 +14,7 @@ class UserProvider extends ChangeNotifier {
   AppUser user = AppUser();
   Image? profilePic;
   Image? tempProfilePic;
+  File? tempProfilePicFile;
 
   Future<bool> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -23,6 +25,7 @@ class UserProvider extends ChangeNotifier {
           element['userId'] == prefs.getString(StorageKeys.userId))) {
         user = AppUser.fromJson(jsonEncode(res.firstWhere((element) =>
             element['userId'] == prefs.getString(StorageKeys.userId))));
+        await prefs.setString(StorageKeys.profilePic, user.profileImage);
         notifyListeners();
       }
       return true;
@@ -42,9 +45,9 @@ class UserProvider extends ChangeNotifier {
   Future<bool> editUser() async {
     Response? response = await UserService.editUser(user);
     if (response != null && response.statusCode == 200) {
-      //  var res = jsonDecode(response.body);
       debugPrint(response.body);
       await getUser();
+      await getProfilePic();
       return true;
     } else {
       debugPrint(response?.body);
@@ -54,6 +57,31 @@ class UserProvider extends ChangeNotifier {
 
   setTempProfilePic(Image profilePic) {
     tempProfilePic = profilePic;
+    notifyListeners();
+  }
+
+  setTempProfilePicFile(File file) {
+    tempProfilePicFile = file;
+    notifyListeners();
+  }
+
+  setProfilePic() async {
+    user.profileImage = await Utils.imageToBase64(tempProfilePicFile!);
+    notifyListeners();
+  }
+
+  setFirstName(String firstName) {
+    user.firstName = firstName;
+    notifyListeners();
+  }
+
+  setLastName(String lastName) {
+    user.lastName = lastName;
+    notifyListeners();
+  }
+
+  setSpecialization(String specialization) {
+    user.specialization = specialization;
     notifyListeners();
   }
 }

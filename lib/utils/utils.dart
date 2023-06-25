@@ -107,6 +107,7 @@ class Utils {
       );
 
       if (pickedFile != null) {
+        pUser.setTempProfilePicFile(File(pickedFile.path));
         await Utils.xFileToImage(pickedFile).then(
           (value) => {
             pUser.setTempProfilePic(value),
