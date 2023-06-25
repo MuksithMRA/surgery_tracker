@@ -40,4 +40,21 @@ class UserService {
     }
     return null;
   }
+
+  static Future<http.Response?> editUser(AppUser model) async {
+    try {
+      String api =
+          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.userCollection)}/${model.documentID}";
+      return await http.patch(
+        Uri.parse(api),
+        body: jsonEncode({
+          "data": model.toJson(),
+        }),
+        headers: Utils.header(true),
+      );
+    } on Exception catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:surgery_tracker/models/auth_user.dart';
 import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/screens/home.dart';
 import 'package:surgery_tracker/screens/register.dart';
-import 'package:surgery_tracker/screens/verification.dart';
 import 'package:surgery_tracker/widgets/custom_textfield.dart';
 import 'package:surgery_tracker/widgets/loader_overlay.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
@@ -27,6 +27,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     pAuth = Provider.of<AuthProvider>(context, listen: false);
+    pAuth.setAuthUser(AuthUser());
+  }
+
+  @override
+  void dispose() {
+    pAuth.setAuthUser(AuthUser());
+    super.dispose();
   }
 
   @override
@@ -86,25 +93,25 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 5,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const VerificationPage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Forgot Password",
-                    style: TextStyle(
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (_) => const VerificationPage(),
+              //         ),
+              //       );
+              //     },
+              //     child: const Text(
+              //       "Forgot Password",
+              //       style: TextStyle(
+              //         fontSize: 15,
+              //       ),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 10,
               ),

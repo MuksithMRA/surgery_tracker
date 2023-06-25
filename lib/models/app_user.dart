@@ -37,6 +37,7 @@ class AppUser {
       specialization: map['specialization'] ?? '',
       userId: map['userId'] ?? '',
       profileImage: map['profileImage'] ?? '',
+      documentID: map['documentId'] ?? '',
     );
   }
 

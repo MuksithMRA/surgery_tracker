@@ -97,6 +97,51 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendAccountRecoveryCode() async {
+    var users = await AuthService.getAllUsers();
+    if (users != null) {
+      if (users.statusCode == 200) {
+        List<dynamic> userBody = jsonDecode(users.body)['users'];
+        if (userBody.isNotEmpty) {
+          if (userBody
+              .any((element) => element['email'] == user.email.trim())) {
+            setTempVerificationCode(Utils.generateRandomCode());
+            bool isSuccess = await Utils.sendVerificationEmail(
+              recipient: user.email.trim(),
+              code: user.tempVerificationCode,
+            );
+            if (isSuccess) {
+              setIsVerificationEmailSent(true);
+            }
+            return isSuccess;
+          } else {
+            ErrorModel.errorMessage = "User doesn't exist";
+          }
+        }
+        return false;
+      } else {
+        debugPrint(users.body);
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  bool verifyCode() {
+    return user.tempVerificationCode == user.verificationCode;
+  }
+
+  void setVerificationCode(int verificationCode) {
+    user.verificationCode = verificationCode;
+    notifyListeners();
+  }
+
+  void setTempVerificationCode(int tempVerificationCode) {
+    user.tempVerificationCode = tempVerificationCode;
+    notifyListeners();
+  }
+
   void setIsVerificationEmailSent(bool isSent) {
     isVerificationCodeSent = isSent;
     notifyListeners();

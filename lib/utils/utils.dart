@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:surgery_tracker/models/email_client.dart';
+import 'package:surgery_tracker/models/error_model.dart';
 
 import '../constants/enviornment.dart';
 
@@ -52,17 +53,19 @@ class Utils {
     );
   }
 
-  static generateRandomCode() {
+  static int generateRandomCode() {
     Random rand = Random();
     return rand.nextInt(99999);
   }
 
-  static sendVerificationEmail(
-      {required String recipient, bool isOnRegister = true}) async {
+  static Future<bool> sendVerificationEmail(
+      {required String recipient,
+      bool isOnRegister = true,
+      required int code}) async {
     String username = EmailClient.email;
     String password = EmailClient.password;
     String title = 'Verfication code for surgery tracker';
-    String content = '${'<p>Here is the code:${generateRandomCode()}'}</p>';
+    String content = '${'<p>Here is the code : $code'}</p>';
 
     final smtpServer = gmail(username, password);
 
@@ -75,11 +78,14 @@ class Utils {
     try {
       final sendReport = await send(message, smtpServer);
       print('Message sent: $sendReport');
+      return true;
     } on MailerException catch (e) {
+      ErrorModel.errorMessage = 'Email not sent';
       print('Message not sent.${e.message}');
       for (var p in e.problems) {
         print('Problem: ${p.code}: ${p.msg}');
       }
+      return false;
     }
   }
 }

@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final bool obsecureText;
   final String? initialValue;
   final bool? isReadOnly;
+  final TextInputType? inputType;
+  final int? maxLength;
   const CustomTextField({
     super.key,
     required this.hintText,
@@ -17,13 +19,17 @@ class CustomTextField extends StatelessWidget {
     this.prefixIcon,
     this.initialValue,
     this.isReadOnly,
+    this.inputType,
+    this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: inputType,
       readOnly: isReadOnly ?? false,
       initialValue: initialValue,
+      maxLength: maxLength,
       obscureText: obsecureText,
       onChanged: onChange,
       autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -104,13 +104,10 @@ class _HomeState extends State<Home> {
             },
             icon: Hero(
               tag: 'doctor_profile',
-              // child: CircleAvatar(
-              //   foregroundColor: Theme.of(context).primaryColor,
-              //   backgroundImage: const AssetImage("assets/doctor_avatar.jpg"),
-              // ),
-              child: Material(
-                shape: const CircleBorder(),
-                child: context.watch<UserProvider>().profilePic,
+              child: CircleAvatar(
+                foregroundColor: Theme.of(context).primaryColor,
+                backgroundImage:
+                    context.watch<UserProvider>().profilePic?.image,
               ),
             ),
           ),

@@ -3,20 +3,27 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:surgery_tracker/constants/storage_keys.dart';
-import 'package:surgery_tracker/models/app_user.dart';
-import 'package:surgery_tracker/services/user_service.dart';
-import 'package:surgery_tracker/utils/utils.dart';
+
+import '../constants/storage_keys.dart';
+import '../models/app_user.dart';
+import '../services/user_service.dart';
+import '../utils/utils.dart';
 
 class UserProvider extends ChangeNotifier {
   AppUser user = AppUser();
   Image? profilePic;
 
   Future<bool> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     Response? response = await UserService.getUsers();
     if (response != null && response.statusCode == 200) {
-      var res = jsonDecode(response.body);
-      debugPrint(response.body);
+      List<dynamic> res = jsonDecode(response.body)['documents'];
+      if (res.any((element) =>
+          element['userId'] == prefs.getString(StorageKeys.userId))) {
+        user = AppUser.fromJson(jsonEncode(res.firstWhere((element) =>
+            element['userId'] == prefs.getString(StorageKeys.userId))));
+        notifyListeners();
+      }
       return true;
     } else {
       return false;
@@ -31,13 +38,16 @@ class UserProvider extends ChangeNotifier {
     });
   }
 
-  // Future<bool> getProfilePic() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   Response? response = await StorageService.getFileFromBucket(
-  //       Enviornment.userBucketID, prefs.getString(StorageKeys.profilePicID)!);
-  //   if (response != null) {
-  //     debugPrint(jsonDecode(response.body).runtimeType.toString());
-  //   }
-  //   return true;
-  // }
+  Future<bool> editUser() async {
+    Response? response = await UserService.editUser(user);
+    if (response != null && response.statusCode == 200) {
+      //  var res = jsonDecode(response.body);
+      debugPrint(response.body);
+      await getUser();
+      return true;
+    } else {
+      debugPrint(response?.body);
+      return false;
+    }
+  }
 }

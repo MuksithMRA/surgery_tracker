@@ -45,11 +45,11 @@ class AuthService {
     return null;
   }
 
-  static Future<http.Response?> verifyEmail(sessionId) async {
+  static Future<http.Response?> getAllUsers() async {
     try {
-      return await http.delete(
-        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.sessions}/$sessionId"),
-        headers: Utils.header(false),
+      return await http.get(
+        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.allUsers}"),
+        headers: Utils.header(true),
       );
     } on Exception catch (ex) {
       debugPrint(ex.toString());
