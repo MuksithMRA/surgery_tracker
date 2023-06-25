@@ -129,11 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     bool isSuccess =
                         await LoadingOverlay.of(context).during(pAuth.login());
                     if (isSuccess && mounted) {
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const Home(),
                         ),
+                        (route) => false,
                       );
                     } else {
                       UtilWidgets.showSnackBar(
