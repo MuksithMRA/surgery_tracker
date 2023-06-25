@@ -4,10 +4,14 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:provider/provider.dart';
 import 'package:surgery_tracker/models/email_client.dart';
 import 'package:surgery_tracker/models/error_model.dart';
+import 'package:surgery_tracker/providers/user_provider.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import '../constants/enviornment.dart';
 
@@ -77,15 +81,40 @@ class Utils {
 
     try {
       final sendReport = await send(message, smtpServer);
-      print('Message sent: $sendReport');
+      debugPrint('Message sent: $sendReport');
       return true;
     } on MailerException catch (e) {
       ErrorModel.errorMessage = 'Email not sent';
-      print('Message not sent.${e.message}');
+      debugPrint('Message not sent.${e.message}');
       for (var p in e.problems) {
-        print('Problem: ${p.code}: ${p.msg}');
+        debugPrint('Problem: ${p.code}: ${p.msg}');
       }
       return false;
+    }
+  }
+
+  static Future<Image> xFileToImage(XFile xFile) async {
+    final Uint8List bytes = await xFile.readAsBytes();
+    return Image.memory(bytes);
+  }
+
+  static Future pickImage(ImageSource source, BuildContext context) async {
+    try {
+      UserProvider pUser = context.read<UserProvider>();
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(
+        source: source,
+      );
+
+      if (pickedFile != null) {
+        await Utils.xFileToImage(pickedFile).then(
+          (value) => {
+            pUser.setTempProfilePic(value),
+          },
+        );
+      }
+    } on Exception catch (e) {
+      UtilWidgets.showSnackBar(context, "Error: $e", true);
     }
   }
 }

@@ -12,6 +12,7 @@ import '../utils/utils.dart';
 class UserProvider extends ChangeNotifier {
   AppUser user = AppUser();
   Image? profilePic;
+  Image? tempProfilePic;
 
   Future<bool> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -49,5 +50,10 @@ class UserProvider extends ChangeNotifier {
       debugPrint(response?.body);
       return false;
     }
+  }
+
+  setTempProfilePic(Image profilePic) {
+    tempProfilePic = profilePic;
+    notifyListeners();
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/providers/user_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
+import 'package:surgery_tracker/utils/utils.dart';
 import 'package:surgery_tracker/widgets/loader_overlay.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -72,16 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(
                       height: 50,
                     ),
-                    CircleAvatar(
-                      radius: 62,
-                      child: Hero(
-                        tag: 'doctor_profile',
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundImage: pUser.profilePic?.image,
-                        ),
-                      ),
-                    ),
+                    profilePicWidget(context),
                     const SizedBox(
                       height: 10,
                     ),
@@ -100,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ExpansionTile(
                             tilePadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 5),
-                            leading: const Icon(Icons.pages_rounded),
+                            leading: const Icon(Icons.person_rounded),
                             title: Text(
                               userProvider.user.firstName,
                               style: const TextStyle(fontSize: 18),
@@ -138,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ExpansionTile(
                             tilePadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 5),
-                            leading: const Icon(Icons.pages_rounded),
+                            leading: const Icon(Icons.person_rounded),
                             title: Text(
                               userProvider.user.lastName,
                               style: const TextStyle(fontSize: 18),
@@ -222,5 +215,124 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       },
     );
+  }
+
+  Stack profilePicWidget(BuildContext context) {
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: 62,
+          child: Hero(
+            tag: 'doctor_profile',
+            child: CircleAvatar(
+              radius: 60,
+              backgroundImage: pUser.profilePic?.image,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () async {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (_) {
+                    return Container(
+                      height: ScreenSize.height * 0.2,
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Choose Image source",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(
+                                  Icons.close_rounded,
+                                ),
+                              )
+                            ],
+                          ),
+                          ListTile(
+                            onTap: () async {
+                              await showPreviewDialog(ImageSource.camera);
+                            },
+                            leading: const Icon(
+                              Icons.camera_alt_rounded,
+                            ),
+                            title: const Text("Take a photo"),
+                          ),
+                          ListTile(
+                            onTap: () async {
+                              await showPreviewDialog(ImageSource.gallery);
+                            },
+                            leading: const Icon(
+                              Icons.image_rounded,
+                            ),
+                            title: const Text("Choose from Gallery"),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+            },
+            child: const CircleAvatar(
+              child: Icon(
+                Icons.camera_alt,
+                size: 25,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget imagePreviewDialog() {
+    return AlertDialog(
+      title: const Text("Image Preview"),
+      content: CircleAvatar(
+        radius: 80,
+        backgroundImage: Provider.of<UserProvider>(context, listen: true)
+            .tempProfilePic
+            ?.image,
+      ),
+      actions: [
+        ElevatedButton(
+            onPressed: () {}, child: const Text("Set as Profile picture")),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("Close"),
+        ),
+      ],
+    );
+  }
+
+  showPreviewDialog(ImageSource source) async {
+    await Utils.pickImage(source, context);
+    if (mounted) {
+      Navigator.pop(context);
+      if (pUser.tempProfilePic != null) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) => imagePreviewDialog(),
+        );
+      }
+    }
   }
 }
