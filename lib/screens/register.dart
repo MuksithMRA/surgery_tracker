@@ -44,183 +44,186 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                child: Form(
-                  key: _key,
-                  child: Column(
-                    children: [
-                      CustomTextField(
-                        prefixIcon: Icons.person_rounded,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "First Name Required";
-                          }
-                          return null;
-                        },
-                        onChange: (value) {
-                          pAuth.setFirstName(value);
-                        },
-                        hintText: 'First Name',
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      CustomTextField(
-                        prefixIcon: Icons.person_rounded,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Last Name Required";
-                          }
-                          return null;
-                        },
-                        onChange: (value) {
-                          pAuth.setLastName(value);
-                        },
-                        hintText: 'Last Name',
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      CustomTextField(
-                        prefixIcon: Icons.medication_rounded,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Specialization Required";
-                          }
-                          return null;
-                        },
-                        onChange: (value) {
-                          pAuth.setSpecialization(value);
-                        },
-                        hintText: 'Specialization',
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      CustomTextField(
-                        prefixIcon: Icons.mail_rounded,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Email Address Required";
-                          } else if (!(value.contains('@') &&
-                              value.contains('.'))) {
-                            return "Invalid Email Address";
-                          }
-                          return null;
-                        },
-                        onChange: (value) {
-                          pAuth.setEmail(value);
-                        },
-                        hintText: 'Email Address',
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      CustomTextField(
-                        obsecureText: true,
-                        prefixIcon: Icons.lock_open_rounded,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Password Required";
-                          }
-                          return null;
-                        },
-                        onChange: (value) {
-                          pAuth.setPassword(value);
-                        },
-                        hintText: 'Password',
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      CustomTextField(
-                        obsecureText: true,
-                        prefixIcon: Icons.lock_rounded,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Confirm Password Required";
-                          } else if (context
-                                  .read<AuthProvider>()
-                                  .user
-                                  .password !=
-                              value.trim()) {
-                            return "Passwords do not match";
-                          }
-                          return null;
-                        },
-                        onChange: (value) {
-                          pAuth.setConfirmPassword(value);
-                        },
-                        hintText: 'Confirm Password',
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.blue),
-                            fixedSize: MaterialStateProperty.all(
-                              Size(
-                                ScreenSize.width,
-                                ScreenSize.height * 0.065,
-                              ),
-                            )),
-                        onPressed: () async {
-                          if (_key.currentState!.validate()) {
-                            bool isSuccess = await LoadingOverlay.of(context)
-                                .during(pAuth.register(context));
-                            if (isSuccess && mounted) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
-                                ),
-                              );
-                              pAuth.setAuthUser(AuthUser());
-                            } else {
-                              UtilWidgets.showSnackBar(
-                                  context, ErrorModel.errorMessage, true);
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Form(
+                    key: _key,
+                    child: Column(
+                      children: [
+                        CustomTextField(
+                          prefixIcon: Icons.person_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "First Name Required";
                             }
-                          }
-                        },
-                        child: const Text(
-                          "Register",
-                          style: TextStyle(fontSize: 17, color: Colors.white),
+                            return null;
+                          },
+                          onChange: (value) {
+                            pAuth.setFirstName(value);
+                          },
+                          hintText: 'First Name',
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      RichText(
-                          text: TextSpan(
-                        children: [
-                          const TextSpan(
-                            text: "Already have an account? ",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          const WidgetSpan(
-                              child: SizedBox(
-                            width: 2,
-                          )),
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomTextField(
+                          prefixIcon: Icons.person_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Last Name Required";
+                            }
+                            return null;
+                          },
+                          onChange: (value) {
+                            pAuth.setLastName(value);
+                          },
+                          hintText: 'Last Name',
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomTextField(
+                          prefixIcon: Icons.medication_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Specialization Required";
+                            }
+                            return null;
+                          },
+                          onChange: (value) {
+                            pAuth.setSpecialization(value);
+                          },
+                          hintText: 'Specialization',
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomTextField(
+                          prefixIcon: Icons.mail_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Email Address Required";
+                            } else if (!(value.contains('@') &&
+                                value.contains('.'))) {
+                              return "Invalid Email Address";
+                            }
+                            return null;
+                          },
+                          onChange: (value) {
+                            pAuth.setEmail(value);
+                          },
+                          hintText: 'Email Address',
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomTextField(
+                          obsecureText: true,
+                          prefixIcon: Icons.lock_open_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Password Required";
+                            }
+                            return null;
+                          },
+                          onChange: (value) {
+                            pAuth.setPassword(value);
+                          },
+                          hintText: 'Password',
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomTextField(
+                          obsecureText: true,
+                          prefixIcon: Icons.lock_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Confirm Password Required";
+                            } else if (context
+                                    .read<AuthProvider>()
+                                    .user
+                                    .password !=
+                                value.trim()) {
+                              return "Passwords do not match";
+                            }
+                            return null;
+                          },
+                          onChange: (value) {
+                            pAuth.setConfirmPassword(value);
+                          },
+                          hintText: 'Confirm Password',
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.blue),
+                              fixedSize: MaterialStateProperty.all(
+                                Size(
+                                  ScreenSize.width,
+                                  ScreenSize.height * 0.065,
+                                ),
+                              )),
+                          onPressed: () async {
+                            if (_key.currentState!.validate()) {
+                              bool isSuccess = await LoadingOverlay.of(context)
+                                  .during(pAuth.register(context));
+                              if (isSuccess && mounted) {
+                                Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => const LoginScreen(),
                                   ),
                                 );
-                              },
-                            text: "Login",
-                            style: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                pAuth.setAuthUser(AuthUser());
+                              } else {
+                                UtilWidgets.showSnackBar(
+                                    context, ErrorModel.errorMessage, true);
+                              }
+                            }
+                          },
+                          child: const Text(
+                            "Register",
+                            style: TextStyle(fontSize: 17, color: Colors.white),
                           ),
-                        ],
-                      ))
-                    ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        RichText(
+                            text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: "Already have an account? ",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            const WidgetSpan(
+                                child: SizedBox(
+                              width: 2,
+                            )),
+                            TextSpan(
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const LoginScreen(),
+                                    ),
+                                  );
+                                },
+                              text: "Login",
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ))
+                      ],
+                    ),
                   ),
                 ),
               ),
