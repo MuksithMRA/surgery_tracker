@@ -40,7 +40,7 @@ class SurgeryProvider extends ChangeNotifier {
     seUserId(prefs.getString(StorageKeys.userId)!);
     Response? response = await SurgeryServices.addSurgery(surgeryModel);
     if (response != null && response.statusCode == 201) {
-      var res = jsonDecode(response.body);
+      // var res = jsonDecode(response.body);
       debugPrint(response.body);
       return true;
     } else {

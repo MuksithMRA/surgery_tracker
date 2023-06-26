@@ -172,13 +172,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               bool isSuccess = await LoadingOverlay.of(context)
                                   .during(pAuth.register(context));
                               if (isSuccess && mounted) {
-                                Navigator.pushReplacement(
+                                pAuth.setAuthUser(AuthUser());
+                                Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => const LoginScreen(),
                                   ),
+                                  (route) => false,
                                 );
-                                pAuth.setAuthUser(AuthUser());
                               } else {
                                 UtilWidgets.showSnackBar(
                                     context, ErrorModel.errorMessage, true);
@@ -207,11 +208,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextSpan(
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.push(
+                                  Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => const LoginScreen(),
                                     ),
+                                    (route) => false,
                                   );
                                 },
                               text: "Login",
