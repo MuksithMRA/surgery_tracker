@@ -10,7 +10,7 @@ import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/models/email_client.dart';
 import 'package:surgery_tracker/models/error_model.dart';
-import 'package:surgery_tracker/providers/user_provider.dart';
+import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import '../constants/enviornment.dart';
@@ -100,20 +100,20 @@ class Utils {
 
   static Future pickImage(ImageSource source, BuildContext context) async {
     try {
-      UserProvider pUser = context.read<UserProvider>();
+      AuthProvider pUser = context.read<AuthProvider>();
       final ImagePicker picker = ImagePicker();
       final XFile? pickedFile = await picker.pickImage(
         source: source,
       );
 
-      if (pickedFile != null) {
-        pUser.setTempProfilePicFile(File(pickedFile.path));
-        await Utils.xFileToImage(pickedFile).then(
-          (value) => {
-            pUser.setTempProfilePic(value),
-          },
-        );
-      }
+      // if (pickedFile != null) {
+      //   pUser.setTempProfilePicFile(File(pickedFile.path));
+      //   await Utils.xFileToImage(pickedFile).then(
+      //     (value) => {
+      //       pUser.setTempProfilePic(value),
+      //     },
+      //   );
+      // }
     } on Exception catch (e) {
       UtilWidgets.showSnackBar(context, "Error: $e", true);
     }

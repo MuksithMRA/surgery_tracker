@@ -1,59 +1,94 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:surgery_tracker/models/auth_user.dart';
-import 'package:surgery_tracker/utils/utils.dart';
 
-import '../constants/api_endpoint.dart';
-import '../constants/enviornment.dart';
+import '../models/error_model.dart';
 
 class AuthService {
-  static Future<http.Response?> login(AuthUser authUser) async {
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<bool> login(AuthUser authModel) async {
     try {
-      return await http.post(
-        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.loginWithEmail}"),
-        body: authUser.toLoginJson(),
-        headers: Utils.header(false),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      UserCredential userCred = await _auth
+          .signInWithEmailAndPassword(
+            email: authModel.email,
+            password: authModel.password,
+          )
+          .then((value) => value);
+
+      return userCred.user?.uid != null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ErrorModel.errorMessage = 'No user found for this email.';
+      } else if (e.code == 'wrong-password') {
+        ErrorModel.errorMessage = 'Wrong password provided for this user.';
+      } else {
+        ErrorModel.errorMessage = e.message ?? '';
+      }
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
     }
-    return null;
+    return false;
   }
 
-  static Future<http.Response?> register(AuthUser registerDto) async {
+  Future<AuthUser?> register(AuthUser authModel) async {
     try {
-      return await http.post(
-        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.registerWithEmail}"),
-        body: registerDto.toJson(),
-        headers: Utils.header(false),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      await _auth
+          .createUserWithEmailAndPassword(
+              email: authModel.email, password: authModel.password)
+          .then((value) => {
+                debugPrint("User registered ${value.user!.uid}"),
+                authModel.userId = value.user!.uid,
+              });
+      return authModel;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        ErrorModel.errorMessage = 'The account already exists for this email.';
+      } else if (e.code == 'invalid-email') {
+        ErrorModel.errorMessage = 'Invalid email address.';
+      } else {
+        ErrorModel.errorMessage = e.message ?? '';
+      }
+      return null;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
+      return null;
     }
-    return null;
   }
 
-  static Future<http.Response?> destroySession(String sessionId) async {
-    try {
-      return await http.delete(
-        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.sessions}/$sessionId"),
-        headers: Utils.header(false),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
-    }
-    return null;
+  bool isLoggedIn() {
+    _auth.userChanges().listen((User? user) {
+      if (user == null) {
+        debugPrint('User is currently signed out!');
+      } else {
+        debugPrint('User is signed in!');
+      }
+    });
+    return _auth.currentUser != null;
   }
 
-  static Future<http.Response?> getAllUsers() async {
+  Future<bool> signOut() async {
     try {
-      return await http.get(
-        Uri.parse("${Enviornment.apiUrl}${ApiEndPoint.allUsers}"),
-        headers: Utils.header(true),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      await _auth.signOut();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      ErrorModel.errorMessage = e.message ?? '';
+      return false;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
+      return false;
     }
-    return null;
+  }
+
+  static Future<void>? forgetPassword(String email) async {
+    try {
+      return await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      ErrorModel.errorMessage = e.message ?? '';
+      return;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
+      return;
+    }
   }
 }

@@ -170,7 +170,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onPressed: () async {
                             if (_key.currentState!.validate()) {
                               bool isSuccess = await LoadingOverlay.of(context)
-                                  .during(pAuth.register(context));
+                                  .during(pAuth.register());
                               if (isSuccess && mounted) {
                                 pAuth.setAuthUser(AuthUser());
                                 Navigator.pushAndRemoveUntil(

@@ -5,7 +5,6 @@ import 'package:surgery_tracker/models/error_model.dart';
 import 'package:surgery_tracker/models/surgery_model.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/providers/surgery_provider.dart';
-import 'package:surgery_tracker/providers/user_provider.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
 import 'package:surgery_tracker/screens/profile.dart';
@@ -25,14 +24,12 @@ class _HomeState extends State<Home> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   late AuthProvider pAuth;
-  late UserProvider pUser;
   late SurgeryProvider pSurgery;
 
   @override
   void initState() {
     super.initState();
     pAuth = Provider.of<AuthProvider>(context, listen: false);
-    pUser = Provider.of<UserProvider>(context, listen: false);
     pSurgery = Provider.of<SurgeryProvider>(context, listen: false);
 
     Future.delayed(Duration.zero, () async {
@@ -48,7 +45,7 @@ class _HomeState extends State<Home> {
       UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
     }
     if (mounted) {
-      await LoadingOverlay.of(context).during(pUser.getProfilePic());
+      // await LoadingOverlay.of(context).during(pUser.getProfilePic());
     }
   }
 
@@ -106,8 +103,8 @@ class _HomeState extends State<Home> {
               tag: 'doctor_profile',
               child: CircleAvatar(
                 foregroundColor: Theme.of(context).primaryColor,
-                backgroundImage:
-                    context.watch<UserProvider>().profilePic?.image,
+                // backgroundImage:
+                //     context.watch<UserProvider>().profilePic?.image,
               ),
             ),
           ),
@@ -126,7 +123,7 @@ class _HomeState extends State<Home> {
               ),
               onPressed: () async {
                 bool isLoggedOut =
-                    await LoadingOverlay.of(context).during(pAuth.logout());
+                    await LoadingOverlay.of(context).during(pAuth.signOut());
                 if (mounted) {
                   if (isLoggedOut) {
                     Navigator.pushReplacement(context,

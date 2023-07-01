@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:surgery_tracker/models/app_user.dart';
-import 'package:surgery_tracker/models/error_model.dart';
-import 'package:surgery_tracker/providers/user_provider.dart';
-import 'package:surgery_tracker/utils/screen_size.dart';
-import 'package:surgery_tracker/utils/utils.dart';
-import 'package:surgery_tracker/widgets/loader_overlay.dart';
-import 'package:surgery_tracker/widgets/util_widgets.dart';
+import 'package:surgery_tracker/providers/auth_provider.dart';
+
+import '../utils/screen_size.dart';
+import '../utils/utils.dart';
+import '../widgets/loader_overlay.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,28 +15,25 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserProvider pUser;
-
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _specializationController =
       TextEditingController();
+  late AuthProvider pAuth;
+
   @override
   void initState() {
     super.initState();
-    pUser = Provider.of<UserProvider>(context, listen: false);
+    pAuth = context.read<AuthProvider>();
     Future.delayed(Duration.zero, () => initialize());
   }
 
   initialize() async {
-    await LoadingOverlay.of(context).during(pUser.getUser());
+    await LoadingOverlay.of(context).during(pAuth.getCurentUserModel());
   }
 
   @override
   void dispose() {
-    pUser.tempProfilePic = null;
-    pUser.tempProfilePicFile = null;
-    pUser.user = AppUser();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _specializationController.dispose();
@@ -47,8 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
         return Scaffold(
           appBar: AppBar(
             title: const Text("Profile"),
@@ -98,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 10,
                     ),
                     Text(
-                      "${userProvider.user.firstName} ${userProvider.user.lastName}",
+                      "${authProvider.appUser.firstName} ${authProvider.appUser.lastName}",
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -114,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 vertical: 10, horizontal: 5),
                             leading: const Icon(Icons.person_rounded),
                             title: Text(
-                              userProvider.user.firstName,
+                              authProvider.appUser.firstName,
                               style: const TextStyle(fontSize: 18),
                             ),
                             subtitle: const Text("First Name"),
@@ -133,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     onPressed: () {
                                       if (_firstNameController
                                           .text.isNotEmpty) {
-                                        pUser.setFirstName(
+                                        pAuth.setFirstName(
                                             _firstNameController.text.trim());
                                         updateProfile();
                                       }
@@ -159,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 vertical: 10, horizontal: 5),
                             leading: const Icon(Icons.person_rounded),
                             title: Text(
-                              userProvider.user.lastName,
+                              authProvider.appUser.lastName,
                               style: const TextStyle(fontSize: 18),
                             ),
                             subtitle: const Text("Last Name"),
@@ -177,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       if (_lastNameController.text.isNotEmpty) {
-                                        pUser.setLastName(
+                                        pAuth.setLastName(
                                             _lastNameController.text.trim());
                                         updateProfile();
                                       }
@@ -203,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 vertical: 10, horizontal: 5),
                             leading: const Icon(Icons.masks_rounded),
                             title: Text(
-                              userProvider.user.specialization,
+                              authProvider.appUser.specialization,
                               style: const TextStyle(fontSize: 18),
                             ),
                             subtitle: const Text("Speciality"),
@@ -222,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     onPressed: () {
                                       if (_specializationController
                                           .text.isNotEmpty) {
-                                        pUser.setSpecialization(
+                                        pAuth.setSpecialization(
                                             _specializationController.text
                                                 .trim());
                                         updateProfile();
@@ -260,13 +255,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Stack profilePicWidget(BuildContext context) {
     return Stack(
       children: [
-        CircleAvatar(
+        const CircleAvatar(
           radius: 62,
           child: Hero(
             tag: 'doctor_profile',
             child: CircleAvatar(
               radius: 60,
-              backgroundImage: pUser.profilePic?.image,
+              // backgroundImage: pUser.profilePic?.image,
             ),
           ),
         ),
@@ -348,16 +343,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget imagePreviewDialog() {
     return AlertDialog(
       title: const Text("Image Preview"),
-      content: CircleAvatar(
+      content: const CircleAvatar(
         radius: 80,
-        backgroundImage: Provider.of<UserProvider>(context, listen: true)
-            .tempProfilePic
-            ?.image,
+        // backgroundImage: Provider.of<UserProvider>(context, listen: true)
+        //     .tempProfilePic
+        //     ?.image,
       ),
       actions: [
         ElevatedButton(
           onPressed: () async {
-            await pUser.setProfilePic();
+            pAuth.setProfileImage();
             updateProfile();
             if (mounted) {
               Navigator.pop(context);
@@ -377,16 +372,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> updateProfile() async {
     if (mounted) {
-      bool isSuccess =
-          await LoadingOverlay.of(context).during(pUser.editUser());
-      if (mounted) {
-        if (isSuccess) {
-          UtilWidgets.showSnackBar(
-              context, "Profile Updated SuccessFully", false);
-        } else {
-          UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
-        }
-      }
+      // bool isSuccess =
+      //     await LoadingOverlay.of(context).during(pAuth.editUser());
+      // if (mounted) {
+      //   if (isSuccess) {
+      //     UtilWidgets.showSnackBar(
+      //         context, "Profile Updated SuccessFully", false);
+      //   } else {
+      //     UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
+      //   }
+      // }
     }
   }
 
@@ -394,13 +389,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await Utils.pickImage(source, context);
     if (mounted) {
       Navigator.pop(context);
-      if (pUser.tempProfilePic != null) {
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) => imagePreviewDialog(),
-        );
-      }
+      // if (pUser.tempProfilePic != null) {
+      //   showDialog(
+      //     barrierDismissible: false,
+      //     context: context,
+      //     builder: (_) => imagePreviewDialog(),
+      //   );
+      // }
     }
   }
 }

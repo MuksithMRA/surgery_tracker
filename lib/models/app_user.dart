@@ -3,7 +3,6 @@ import 'dart:convert';
 class AppUser {
   String firstName;
   String lastName;
-  String imageUrl;
   String specialization;
   String documentID;
   String userId;
@@ -11,7 +10,6 @@ class AppUser {
   AppUser({
     this.firstName = '',
     this.lastName = '',
-    this.imageUrl = '',
     this.specialization = '',
     this.documentID = '',
     this.userId = '',
@@ -22,7 +20,6 @@ class AppUser {
     return <String, dynamic>{
       'firstName': firstName,
       'lastName': lastName,
-      'imageUrl': imageUrl,
       'specialization': specialization,
       'userId': userId,
       'profileImage': profileImage
@@ -33,7 +30,6 @@ class AppUser {
     return AppUser(
       firstName: map['firstName'] ?? '',
       lastName: map['lastName'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
       specialization: map['specialization'] ?? '',
       userId: map['userId'] ?? '',
       profileImage: map['profileImage'] ?? '',

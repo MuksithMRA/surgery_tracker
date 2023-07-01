@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:surgery_tracker/models/app_user.dart';
+import 'package:surgery_tracker/widgets/util_widgets.dart';
 
-import '../constants/storage_keys.dart';
 import '../models/auth_user.dart';
 import '../models/error_model.dart';
 import '../services/auth_service.dart';
@@ -13,138 +12,96 @@ import '../services/user_service.dart';
 import '../utils/utils.dart';
 
 class AuthProvider extends ChangeNotifier {
-  bool _isAuthenticated = false;
+  final bool _isAuthenticated = false;
   AuthUser user = AuthUser();
+  AppUser appUser = AppUser();
   String confirmPassword = '';
-  bool isVerificationCodeSent = false;
   bool get isAuthenticated => _isAuthenticated;
+  AuthService authService = AuthService();
 
   Future<bool> login() async {
-    _isAuthenticated = true;
-    notifyListeners();
-    Response? loginResponse = await AuthService.login(user);
-    if (loginResponse != null) {
-      Map loginResBody = jsonDecode(loginResponse.body);
-      if (!loginResBody.containsKey('code')) {
-        Response? userResponse = await UserService.getUsers();
-        if (userResponse != null) {
-          List<dynamic> userResponseBody =
-              jsonDecode(userResponse.body)["documents"];
-          var user = userResponseBody.firstWhere(
-              (element) => element['userId'] == loginResBody['userId']);
+    bool success = await authService.login(user).then((value) => value);
+    if (success) {
+      await getCurentUserModel();
+    }
+    return success;
+  }
 
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString(StorageKeys.sessionID, loginResBody["\$id"]);
-          prefs.setString(StorageKeys.userId, loginResBody["userId"]);
-          prefs.setString(StorageKeys.profilePic, user["profileImage"]);
+  Future<bool> register() async {
+    user.appUser = appUser;
+    return await authService.register(user).then(
+      (value) {
+        if (value != null) {
+          user = value;
+          UserService.addUser(user);
           return true;
         } else {
           return false;
         }
-      } else {
-        ErrorModel.errorMessage = loginResBody['message'];
-        return false;
-      }
-    } else {
-      return false;
-    }
+      },
+    );
   }
 
-  Future<bool> logout() async {
-    _isAuthenticated = false;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Response? response = await AuthService.destroySession(
-        prefs.getString(StorageKeys.sessionID)!);
-    if (response != null) {
-      debugPrint(response.body);
-      await prefs.remove(StorageKeys.sessionID);
-      await prefs.remove(StorageKeys.userId);
-      await prefs.remove(StorageKeys.profilePic);
-    }
-    notifyListeners();
-    return true;
+  Future<bool> signOut() async {
+    return await authService.signOut();
   }
 
-  Future<bool> register(BuildContext context) async {
-    setUserId();
-    Response? response = await AuthService.register(user);
-    if (response != null) {
-      setDocumentId();
-      Map res = jsonDecode(response.body);
-      if (!res.containsKey('code') && res['status']) {
-        setName();
-        setProfileImage();
-        response = await UserService.addUser(user.appUser);
-        if (response != null) {
-          Map<String, dynamic> responseBody = jsonDecode(response.body);
-          if (!res.containsKey('code')) {
-            user = AuthUser();
-            notifyListeners();
-            return true;
-          } else {
-            ErrorModel.errorMessage = responseBody['message'];
-            return false;
-          }
-        } else {
-          return false;
+  bool isLoggedIn() {
+    return authService.isLoggedIn();
+  }
+
+  Future<AuthUser?> getCurentUserModel() async {
+    if (authService.isLoggedIn()) {
+      return await UserService.getCurentUser().then((value) {
+        if (value != null) {
+          Map<String, dynamic> user = value.docs.first.data();
+          this.user.email = user['email'];
+          this.user.userId = user['uid'];
+          appUser.firstName = user['first_name'];
+          appUser.lastName = user['last_name'];
+          appUser.profileImage = user['profilePic'];
+          notifyListeners();
+          return this.user;
         }
-      } else {
-        ErrorModel.errorMessage = res['message'];
-        return false;
-      }
-    } else {
-      return false;
+        return null;
+      });
     }
+    return null;
   }
 
-  Future<bool> sendAccountRecoveryCode() async {
-    var users = await AuthService.getAllUsers();
-    if (users != null) {
-      if (users.statusCode == 200) {
-        List<dynamic> userBody = jsonDecode(users.body)['users'];
-        if (userBody.isNotEmpty) {
-          if (userBody
-              .any((element) => element['email'] == user.email.trim())) {
-            setTempVerificationCode(Utils.generateRandomCode());
-            bool isSuccess = await Utils.sendVerificationEmail(
-              recipient: user.email.trim(),
-              code: user.tempVerificationCode,
-            );
-            if (isSuccess) {
-              setIsVerificationEmailSent(true);
-            }
-            return isSuccess;
-          } else {
-            ErrorModel.errorMessage = "User doesn't exist";
-          }
+  Future<bool> updateSingleField(String key, String value) async {
+    return await UserService.updateSingleField(key, value)
+        .then((success) async {
+      if (success) {
+        if (key == 'profilePic') {
+          getCurrentUser()!.updatePhotoURL(value);
         }
-        return false;
+
+        if (key == 'first_name' || key == 'last_name') {
+          await getCurentUserModel();
+          getCurrentUser()!
+              .updateDisplayName("${appUser.firstName} ${appUser.lastName}");
+          notifyListeners();
+        }
+        return true;
       } else {
-        debugPrint(users.body);
         return false;
       }
+    });
+  }
+
+  Future<bool> forgetPassword(BuildContext context) async {
+    var response = AuthService.forgetPassword(user.email);
+    if (response != null) {
+      return true;
     } else {
+      UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
       return false;
     }
   }
 
-  bool verifyCode() {
-    return user.tempVerificationCode == user.verificationCode;
-  }
-
-  void setVerificationCode(int verificationCode) {
-    user.verificationCode = verificationCode;
-    notifyListeners();
-  }
-
-  void setTempVerificationCode(int tempVerificationCode) {
-    user.tempVerificationCode = tempVerificationCode;
-    notifyListeners();
-  }
-
-  void setIsVerificationEmailSent(bool isSent) {
-    isVerificationCodeSent = isSent;
-    notifyListeners();
+  User? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
   }
 
   void setAuthUser(AuthUser authUser) {
@@ -186,11 +143,6 @@ class AuthProvider extends ChangeNotifier {
   void setName({String? name}) {
     name ??= "${user.appUser.firstName} ${user.appUser.lastName}";
     user.name = name;
-    notifyListeners();
-  }
-
-  void setImageUrl(String imageUrl) {
-    user.appUser.imageUrl = imageUrl;
     notifyListeners();
   }
 

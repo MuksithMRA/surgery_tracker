@@ -6,8 +6,6 @@ class AuthUser {
   String name;
   String email;
   String password;
-  int tempVerificationCode;
-  int verificationCode;
 
   AppUser appUser = AppUser();
   AuthUser({
@@ -15,8 +13,6 @@ class AuthUser {
     this.name = '',
     this.email = '',
     this.password = '',
-    this.verificationCode = 0,
-    this.tempVerificationCode = 0,
   }) {
     name = "${appUser.firstName} ${appUser.lastName}";
   }

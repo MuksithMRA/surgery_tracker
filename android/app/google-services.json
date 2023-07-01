@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "246456467530",
+    "project_id": "surgerey-tracker",
+    "storage_bucket": "surgerey-tracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246456467530:android:9770dc41e00bd7085366b3",
+        "android_client_info": {
+          "package_name": "com.coda.surgery_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246456467530-kug7npthl5r21slr77qb9i39kducmv2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDpLBOni5TsHXpR6uD9wqn-o71YJrkSF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246456467530-kug7npthl5r21slr77qb9i39kducmv2m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
