@@ -35,7 +35,7 @@ class UserService {
     try {
       result = await FirebaseFirestore.instance
           .collection('users')
-          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
     } on FirebaseException catch (e) {
       ErrorModel.errorMessage = e.message ?? '';

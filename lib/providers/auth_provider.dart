@@ -55,11 +55,10 @@ class AuthProvider extends ChangeNotifier {
       return await UserService.getCurentUser().then((value) {
         if (value != null) {
           Map<String, dynamic> user = value.docs.first.data();
-          this.user.email = user['email'];
-          this.user.userId = user['uid'];
-          appUser.firstName = user['first_name'];
-          appUser.lastName = user['last_name'];
-          appUser.profileImage = user['profilePic'];
+          appUser = AppUser.fromMap(user);
+          this.user.email = appUser.email;
+          this.user.userId = appUser.userId;
+          this.user.appUser = appUser;
           notifyListeners();
           return this.user;
         }
@@ -110,6 +109,7 @@ class AuthProvider extends ChangeNotifier {
 
   void setEmail(String email) {
     user.email = email;
+    user.appUser.email = email;
     notifyListeners();
   }
 
@@ -154,15 +154,6 @@ class AuthProvider extends ChangeNotifier {
       user.userId = userId;
     }
     user.appUser.userId = user.userId;
-    notifyListeners();
-  }
-
-  void setDocumentId({String? docId}) {
-    if (docId == null) {
-      user.appUser.documentID = Utils.generateRandomID();
-    } else {
-      user.appUser.documentID = docId;
-    }
     notifyListeners();
   }
 

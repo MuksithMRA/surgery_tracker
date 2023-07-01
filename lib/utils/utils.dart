@@ -106,14 +106,14 @@ class Utils {
         source: source,
       );
 
-      // if (pickedFile != null) {
-      //   pUser.setTempProfilePicFile(File(pickedFile.path));
-      //   await Utils.xFileToImage(pickedFile).then(
-      //     (value) => {
-      //       pUser.setTempProfilePic(value),
-      //     },
-      //   );
-      // }
+      if (pickedFile != null) {
+        // pUser.setTempProfilePicFile(File(pickedFile.path));
+        await Utils.xFileToImage(pickedFile).then(
+          (value) => {
+            //  pUser.setTempProfilePic(value),
+          },
+        );
+      }
     } on Exception catch (e) {
       UtilWidgets.showSnackBar(context, "Error: $e", true);
     }

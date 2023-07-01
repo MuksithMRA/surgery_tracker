@@ -4,16 +4,16 @@ class AppUser {
   String firstName;
   String lastName;
   String specialization;
-  String documentID;
   String userId;
   String profileImage;
+  String email;
   AppUser({
     this.firstName = '',
     this.lastName = '',
     this.specialization = '',
-    this.documentID = '',
     this.userId = '',
     this.profileImage = '',
+    this.email = '',
   });
 
   Map<String, dynamic> toMap() {
@@ -22,7 +22,8 @@ class AppUser {
       'lastName': lastName,
       'specialization': specialization,
       'userId': userId,
-      'profileImage': profileImage
+      'profileImage': profileImage,
+      'email': email,
     };
   }
 
@@ -33,7 +34,7 @@ class AppUser {
       specialization: map['specialization'] ?? '',
       userId: map['userId'] ?? '',
       profileImage: map['profileImage'] ?? '',
-      documentID: map['\$id'] ?? '',
+      email: map['email'] ?? '',
     );
   }
 
