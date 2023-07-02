@@ -1,74 +1,60 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:surgery_tracker/models/surgery_model.dart';
 
-import '../constants/api_endpoint.dart';
-import '../constants/enviornment.dart';
-import '../utils/utils.dart';
+import '../models/error_model.dart';
 
 class SurgeryServices {
-  static Future<Response?> getAllSurgeries() async {
+  static final _surgeries = FirebaseFirestore.instance.collection('surgeries');
+  static final _currentUser = FirebaseAuth.instance.currentUser!;
+
+  static Future<QuerySnapshot<Map<String, dynamic>>?> getAllSurgeries() async {
+    QuerySnapshot<Map<String, dynamic>>? documentSnapshot;
     try {
-      return await get(
-        Uri.parse(
-          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.surgeryCollection)}",
-        ),
-        headers: Utils.header(true),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      documentSnapshot = await _surgeries.get();
+    } on FirebaseException catch (e) {
+      ErrorModel.errorMessage = e.message!;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
     }
-    return null;
+    return documentSnapshot;
   }
 
-  static Future<Response?> deleteSurgery(String documentId) async {
+  static Future<bool> addSurgery(SurgeryModel surgery) async {
     try {
-      String api =
-          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.surgeryCollection)}/$documentId";
-      return await delete(
-        Uri.parse(api),
-        headers: Utils.header(true),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      surgery.userId = _currentUser.uid;
+      await _surgeries.add(surgery.toMap());
+      return true;
+    } on FirebaseException catch (e) {
+      ErrorModel.errorMessage = e.message!;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
     }
-    return null;
+    return false;
   }
 
-  static Future<Response?> editSurgery(SurgeryModel model) async {
+  static Future<bool> deleteSurgery(String surgeryId) async {
     try {
-      String api =
-          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.surgeryCollection)}/${model.documentID}";
-      return await patch(
-        Uri.parse(api),
-        body: jsonEncode({
-          "data": model.toJson(),
-        }),
-        headers: Utils.header(true),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      return await _surgeries.doc(surgeryId).delete().then((value) {
+        return true;
+      });
+    } on FirebaseException catch (e) {
+      ErrorModel.errorMessage = e.message!;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
     }
-    return null;
+    return false;
   }
 
-  static Future<Response?> addSurgery(SurgeryModel surgeryModel) async {
+  static Future<bool> editSurgery(SurgeryModel model) async {
     try {
-      return await post(
-        Uri.parse(
-          "${Enviornment.apiUrl}${ApiEndPoint.getDatabaseEndpoint(Enviornment.surgeryCollection)}",
-        ),
-        body: jsonEncode({
-          "data": surgeryModel.toJson(),
-          "documentId": surgeryModel.documentID
-        }),
-        headers: Utils.header(true),
-      );
-    } on Exception catch (ex) {
-      debugPrint(ex.toString());
+      await _surgeries.doc(model.documentID).update(model.toMap());
+      return true;
+    } on FirebaseException catch (e) {
+      ErrorModel.errorMessage = e.message!;
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
     }
-    return null;
+    return false;
   }
 }

@@ -118,4 +118,33 @@ class Utils {
       UtilWidgets.showSnackBar(context, "Error: $e", true);
     }
   }
+
+  static DateTime date(String value, String? format) {
+    format ??= "dd/MM/YYYY";
+    String key = format.contains('/') ? '/' : '-';
+    List<String> items = value.split(key);
+
+    if (items[0].length == 1) {
+      items[0] = '0${items[0]}';
+    }
+
+    if (items[1].length == 1) {
+      items[1] = '0${items[1]}';
+    }
+
+    if (items[2].length == 1) {
+      items[2] = '0${items[2]}';
+    }
+
+    if (format.substring(0, 3) == 'dd$key' ||
+        format.substring(0, 2) == 'd$key') {
+      return DateTime.parse('${items[2]}-${items[1]}-${items[0]}');
+    } else if (format.substring(0, 3) == 'mm$key' ||
+        format.substring(0, 3) == 'MM$key' ||
+        format.substring(0, 2) == 'M$key') {
+      return DateTime.parse('${items[2]}-${items[0]}-${items[1]}');
+    } else {
+      return DateTime.parse('${items[0]}-${items[1]}-${items[2]}');
+    }
+  }
 }

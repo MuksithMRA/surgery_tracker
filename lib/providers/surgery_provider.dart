@@ -1,9 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:surgery_tracker/constants/storage_keys.dart';
 import 'package:surgery_tracker/models/surgery_model.dart';
 import 'package:surgery_tracker/services/surgery_services.dart';
 import 'package:surgery_tracker/utils/utils.dart';
@@ -13,64 +8,58 @@ class SurgeryProvider extends ChangeNotifier {
   SurgeryModel surgeryModel = SurgeryModel();
 
   Future<bool> getAllSurgeries() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    Response? response = await SurgeryServices.getAllSurgeries();
-    if (response != null && response.statusCode == 200) {
-      List<dynamic> res = jsonDecode(response.body)['documents'];
-      surgeries = res
-          .map((e) => SurgeryModel.fromJson(jsonEncode(e)))
-          .where((element) =>
-              element.userId == prefs.getString(StorageKeys.userId)!)
-          .toList();
-      notifyListeners();
-      return true;
-    } else {
-      return false;
-    }
+    return await SurgeryServices.getAllSurgeries().then((value) {
+      if (value != null) {
+        surgeries = value.docs.map((e) {
+          SurgeryModel surgeryModel = SurgeryModel.fromMap(e.data());
+          surgeryModel.documentID = e.id;
+          return surgeryModel;
+        }).toList();
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    });
   }
 
   Future<bool> saveSurgery() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setDocumentId();
-    await getAllSurgeries();
-    int id = surgeries.isNotEmpty ? surgeries.last.id : 1;
-    setId(id += 1);
-    setCurrentDate();
-    seUserId(prefs.getString(StorageKeys.userId)!);
-    Response? response = await SurgeryServices.addSurgery(surgeryModel);
-    if (response != null && response.statusCode == 201) {
-      // var res = jsonDecode(response.body);
-      debugPrint(response.body);
-      return true;
-    } else {
-      return false;
-    }
+    bool success = false;
+    await SurgeryServices.addSurgery(surgeryModel).then(
+      (value) async {
+        success = value;
+        if (success) {
+          await getAllSurgeries();
+        }
+      },
+    );
+    notifyListeners();
+    return success;
   }
 
   Future<bool> deleteSurgery(String documentID) async {
-    Response? response = await SurgeryServices.deleteSurgery(documentID);
-    if (response != null && response.statusCode == 204) {
-      //  var res = jsonDecode(response.body);
-      debugPrint(response.body);
-      await getAllSurgeries();
-      return true;
-    } else {
-      return false;
-    }
+    bool success = false;
+    await SurgeryServices.deleteSurgery(documentID).then(
+      (value) async {
+        success = value;
+        if (success) {
+          await getAllSurgeries();
+        }
+      },
+    );
+    notifyListeners();
+    return success;
   }
 
   Future<bool> editSurgery() async {
-    Response? response = await SurgeryServices.editSurgery(surgeryModel);
-    if (response != null && response.statusCode == 200) {
-      //  var res = jsonDecode(response.body);
-      debugPrint(response.body);
-      await getAllSurgeries();
-      return true;
-    } else {
-      debugPrint(response?.body);
-      return false;
-    }
+    bool success = false;
+    await SurgeryServices.editSurgery(surgeryModel).then(
+      (value) async {
+        success = value;
+      },
+    );
+    notifyListeners();
+    return success;
   }
 
   setSurgery(SurgeryModel surgery) {
@@ -88,11 +77,6 @@ class SurgeryProvider extends ChangeNotifier {
 
   seUserId(String userId) {
     surgeryModel.userId = userId;
-    notifyListeners();
-  }
-
-  setId(int id) {
-    surgeryModel.id = id;
     notifyListeners();
   }
 

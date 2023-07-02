@@ -255,13 +255,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Stack profilePicWidget(BuildContext context) {
     return Stack(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 62,
           child: Hero(
             tag: 'doctor_profile',
             child: CircleAvatar(
               radius: 60,
-              // backgroundImage: pUser.profilePic?.image,
+              backgroundImage: NetworkImage(pAuth.appUser.profileImage),
             ),
           ),
         ),

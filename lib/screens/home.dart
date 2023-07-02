@@ -38,14 +38,10 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> initialize() async {
-    // await LoadingOverlay.of(context).during(pUser.getProfilePic());
     bool isSuccess =
         await LoadingOverlay.of(context).during(pSurgery.getAllSurgeries());
     if (!isSuccess && mounted) {
       UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
-    }
-    if (mounted) {
-      // await LoadingOverlay.of(context).during(pUser.getProfilePic());
     }
   }
 
@@ -103,8 +99,8 @@ class _HomeState extends State<Home> {
               tag: 'doctor_profile',
               child: CircleAvatar(
                 foregroundColor: Theme.of(context).primaryColor,
-                // backgroundImage:
-                //     context.watch<UserProvider>().profilePic?.image,
+                backgroundImage: NetworkImage(
+                    context.watch<AuthProvider>().appUser.profileImage),
               ),
             ),
           ),
@@ -161,7 +157,7 @@ class _HomeState extends State<Home> {
                     child: TextField(
                       decoration: InputDecoration(
                         suffixIcon: const Icon(Icons.search),
-                        hintText: 'Enter Doctor ID or Surgery Name',
+                        hintText: 'Enter Consultant Name or Surgery Name',
                         filled: true,
                         fillColor: Colors.grey.shade200,
                         border: OutlineInputBorder(
@@ -224,9 +220,10 @@ class _HomeState extends State<Home> {
                                         child: Row(
                                           children: [
                                             cardSubItem(
-                                                "Date",
-                                                DateFormat.yMd().format(
-                                                    surgeryModel.date!)),
+                                              "Date",
+                                              DateFormat.yMMMd()
+                                                  .format(surgeryModel.date!),
+                                            ),
                                             cardSubItem(
                                                 "Done By", surgeryModel.doneBy),
                                             cardActionButton("E", surgeryModel),
@@ -317,6 +314,7 @@ class _HomeState extends State<Home> {
                           bool isSuccess = await LoadingOverlay.of(context)
                               .during(pSurgery.deleteSurgery(model.documentID));
                           if (mounted) {
+                            pSurgery.setSurgery(SurgeryModel());
                             if (isSuccess) {
                               Navigator.pop(context);
                               UtilWidgets.showSnackBar(
@@ -506,6 +504,9 @@ class _HomeState extends State<Home> {
                       MaterialPageRoute(builder: (context) => const Home()));
                   UtilWidgets.showSnackBar(
                       context, "Surgery Added Successfully", false);
+                } else {
+                  UtilWidgets.showSnackBar(
+                      context, ErrorModel.errorMessage, true);
                 }
               }
             }
