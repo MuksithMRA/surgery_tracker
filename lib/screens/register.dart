@@ -173,6 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   .during(pAuth.register());
                               if (isSuccess && mounted) {
                                 pAuth.setAuthUser(AuthUser());
+
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(

@@ -123,6 +123,7 @@ class AuthProvider extends ChangeNotifier {
 
   void setAuthUser(AuthUser authUser) {
     user = authUser;
+    appUser = AppUser();
   }
 
   void setEmail(String email) {
