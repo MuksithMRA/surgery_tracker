@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: 'Email Address',
               ),
               const SizedBox(
-                height: 10,
+                height: 15,
               ),
               CustomTextField(
                 validator: (value) {
@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 5,
               ),
               ElevatedButton(
                 style: ButtonStyle(

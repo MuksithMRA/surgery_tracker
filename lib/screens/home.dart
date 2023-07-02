@@ -31,15 +31,15 @@ class _HomeState extends State<Home> {
     super.initState();
     pAuth = Provider.of<AuthProvider>(context, listen: false);
     pSurgery = Provider.of<SurgeryProvider>(context, listen: false);
-
     Future.delayed(Duration.zero, () async {
       await initialize();
     });
   }
 
   Future<void> initialize() async {
-    bool isSuccess =
-        await LoadingOverlay.of(context).during(pSurgery.getAllSurgeries());
+    LoadingOverlay overlay = LoadingOverlay.of(context);
+    await overlay.during(pAuth.getCurentUserModel());
+    bool isSuccess = await overlay.during(pSurgery.getAllSurgeries());
     if (!isSuccess && mounted) {
       UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
     }

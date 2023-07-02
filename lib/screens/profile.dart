@@ -348,9 +348,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       content: CircleAvatar(
         radius: 80,
         backgroundImage: Image.file(
-                Provider.of<AuthProvider>(context, listen: true)
-                    .tempProfilePic!)
-            .image,
+          Provider.of<AuthProvider>(context, listen: true).tempProfilePic!,
+          fit: BoxFit.cover,
+        ).image,
       ),
       actions: [
         ElevatedButton(

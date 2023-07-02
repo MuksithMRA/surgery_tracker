@@ -7,6 +7,7 @@ import 'package:surgery_tracker/widgets/loader_overlay.dart';
 import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import '../models/auth_user.dart';
+import '../models/error_model.dart';
 import '../utils/screen_size.dart';
 
 class VerificationPage extends StatefulWidget {
@@ -89,8 +90,17 @@ class _VerificationPageState extends State<VerificationPage> {
                           )),
                       onPressed: () async {
                         if (_verificationKey.currentState!.validate()) {
-                          await LoadingOverlay.of(context)
+                          bool success = await LoadingOverlay.of(context)
                               .during(pAuth.forgetPassword(context));
+                          if (mounted) {
+                            if (success) {
+                              UtilWidgets.showSnackBar(
+                                  context, "Password Reset Email Sent", false);
+                            } else {
+                              UtilWidgets.showSnackBar(
+                                  context, ErrorModel.errorMessage, false);
+                            }
+                          }
                         }
                       },
                       child: const Text(

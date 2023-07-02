@@ -112,8 +112,9 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> forgetPassword(BuildContext context) async {
-    await AuthService.forgetPassword(user.email);
+  Future<bool> forgetPassword(BuildContext context) async {
+    bool success = await AuthService.forgetPassword(user.email);
+    return success;
   }
 
   User? getCurrentUser() {

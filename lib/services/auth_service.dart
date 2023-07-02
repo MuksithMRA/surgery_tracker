@@ -81,15 +81,16 @@ class AuthService {
     }
   }
 
-  static Future<void>? forgetPassword(String email) async {
+  static Future<bool> forgetPassword(String email) async {
     try {
-      return await _auth.sendPasswordResetEmail(email: email);
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
     } on FirebaseAuthException catch (e) {
       ErrorModel.errorMessage = e.message ?? '';
-      return;
+      return false;
     } on Exception catch (e) {
       ErrorModel.errorMessage = e.toString();
-      return;
+      return false;
     }
   }
 }
