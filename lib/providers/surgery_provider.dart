@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:surgery_tracker/models/surgery_model.dart';
 import 'package:surgery_tracker/services/surgery_services.dart';
-import 'package:surgery_tracker/utils/utils.dart';
 
 class SurgeryProvider extends ChangeNotifier {
   List<SurgeryModel> surgeries = [];
@@ -64,15 +63,6 @@ class SurgeryProvider extends ChangeNotifier {
 
   setSurgery(SurgeryModel surgery) {
     surgeryModel = surgery;
-  }
-
-  setDocumentId({String? documemntID}) {
-    if (documemntID != null) {
-      surgeryModel.documentID = documemntID;
-    } else {
-      surgeryModel.documentID = Utils.generateRandomID();
-    }
-    notifyListeners();
   }
 
   seUserId(String userId) {

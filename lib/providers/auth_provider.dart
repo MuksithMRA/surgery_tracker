@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:surgery_tracker/models/app_user.dart';
 
+import '../models/app_user.dart';
 import '../models/auth_user.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
@@ -134,17 +134,6 @@ class AuthProvider extends ChangeNotifier {
   void setName({String? name}) {
     name ??= "${user.appUser.firstName} ${user.appUser.lastName}";
     user.name = name;
-    notifyListeners();
-  }
-
-  void setUserId({String? userId}) {
-    if (userId == null) {
-      user.userId = Utils.generateRandomID();
-      user.appUser.userId = user.userId;
-    } else {
-      user.userId = userId;
-    }
-    user.appUser.userId = user.userId;
     notifyListeners();
   }
 
