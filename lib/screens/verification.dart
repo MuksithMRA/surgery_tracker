@@ -94,11 +94,16 @@ class _VerificationPageState extends State<VerificationPage> {
                               .during(pAuth.forgetPassword(context));
                           if (mounted) {
                             if (success) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const LoginScreen()),
+                                  (route) => false);
                               UtilWidgets.showSnackBar(
                                   context, "Password Reset Email Sent", false);
                             } else {
                               UtilWidgets.showSnackBar(
-                                  context, ErrorModel.errorMessage, false);
+                                  context, ErrorModel.errorMessage, true);
                             }
                           }
                         }
