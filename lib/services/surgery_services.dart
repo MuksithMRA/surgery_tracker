@@ -11,7 +11,8 @@ class SurgeryServices {
   static Future<QuerySnapshot<Map<String, dynamic>>?> getAllSurgeries() async {
     QuerySnapshot<Map<String, dynamic>>? documentSnapshot;
     try {
-      documentSnapshot = await _surgeries.get();
+      documentSnapshot =
+          await _surgeries.where("userId", isEqualTo: _currentUser.uid).get();
     } on FirebaseException catch (e) {
       ErrorModel.errorMessage = e.message!;
     } on Exception catch (e) {

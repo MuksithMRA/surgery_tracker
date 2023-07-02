@@ -8,6 +8,7 @@ import '../utils/screen_size.dart';
 import '../utils/utils.dart';
 import '../widgets/loader_overlay.dart';
 import '../widgets/util_widgets.dart';
+import 'login.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -63,7 +64,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    bool isLoggedOut = await LoadingOverlay.of(context)
+                        .during(pAuth.signOut());
+                    if (mounted) {
+                      if (isLoggedOut) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()));
+                      } else {
+                        UtilWidgets.showSnackBar(
+                            context, ErrorModel.errorMessage, true);
+                      }
+                    }
+                  },
                   child: const Row(
                     children: [
                       Icon(Icons.logout),
@@ -127,12 +142,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_firstNameController
                                           .text.isNotEmpty) {
                                         pAuth.setFirstName(
                                             _firstNameController.text.trim());
-                                        updateProfile();
+                                        await updateProfile();
+                                        _firstNameController.clear();
                                       }
                                     },
                                     icon: const Icon(Icons.send),
@@ -172,11 +188,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_lastNameController.text.isNotEmpty) {
                                         pAuth.setLastName(
                                             _lastNameController.text.trim());
-                                        updateProfile();
+                                        await updateProfile();
+                                        _lastNameController.clear();
                                       }
                                     },
                                     icon: const Icon(Icons.send),
@@ -216,13 +233,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_specializationController
                                           .text.isNotEmpty) {
                                         pAuth.setSpecialization(
                                             _specializationController.text
                                                 .trim());
-                                        updateProfile();
+                                        await updateProfile();
+                                        _specializationController.clear();
                                       }
                                     },
                                     icon: const Icon(Icons.send),

@@ -162,7 +162,7 @@ class _HomeState extends State<Home> {
                       },
                       decoration: InputDecoration(
                         suffixIcon: const Icon(Icons.search),
-                        hintText: 'Enter Consultant Name or Surgery Name',
+                        hintText: 'Enter Name, BHT or Surgery Name',
                         filled: true,
                         fillColor: Colors.grey.shade200,
                         border: OutlineInputBorder(

@@ -69,7 +69,8 @@ class SurgeryProvider extends ChangeNotifier {
       searchResult = surgeries
           .where((element) =>
               element.consultantName.toLowerCase().contains(searchText) ||
-              element.surgeryName.toLowerCase().contains(searchText))
+              element.surgeryName.toLowerCase().contains(searchText) ||
+              element.bht.toLowerCase().contains(searchText))
           .toList();
     } else {
       searchResult = surgeries;
