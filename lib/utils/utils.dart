@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
@@ -88,6 +89,41 @@ class Utils {
       return DateTime.parse('${items[2]}-${items[0]}-${items[1]}');
     } else {
       return DateTime.parse('${items[0]}-${items[1]}-${items[2]}');
+    }
+  }
+
+  static Future cropImage(BuildContext context) async {
+    AuthProvider imageUtilProvider = context.read<AuthProvider>();
+    if (imageUtilProvider.tempProfilePic != null) {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: imageUtilProvider.tempProfilePic!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Crop Your Image',
+              toolbarColor: Theme.of(context).primaryColor,
+              toolbarWidgetColor: Colors.white,
+              activeControlsWidgetColor: Theme.of(context).primaryColor,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Crop Your Image',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+
+      if (croppedFile != null) {
+        imageUtilProvider.setTempProfilePicFile(File(croppedFile.path));
+      }
     }
   }
 }

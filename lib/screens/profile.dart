@@ -337,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               ListTile(
                 onTap: () async {
-                  await showPreviewDialog(ImageSource.camera);
+                  await onPickImage(ImageSource.camera);
                 },
                 leading: const Icon(
                   Icons.camera_alt_rounded,
@@ -346,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               ListTile(
                 onTap: () async {
-                  await showPreviewDialog(ImageSource.gallery);
+                  await onPickImage(ImageSource.gallery);
                 },
                 leading: const Icon(
                   Icons.image_rounded,
@@ -362,7 +362,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget imagePreviewDialog() {
     return AlertDialog(
-      title: const Text("Image Preview"),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "Image Preview",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await showPreviewDialog();
+              },
+              icon: const Icon(Icons.edit))
+        ],
+      ),
       content: CircleAvatar(
         radius: 80,
         backgroundImage: Image.file(
@@ -405,11 +419,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  showPreviewDialog(ImageSource source) async {
-    await Utils.pickImage(source, context);
-    if (mounted) {
-      Navigator.pop(context);
-      if (pAuth.tempProfilePic != null) {
+  onPickImage(ImageSource source) async {
+    Navigator.pop(context);
+    await Utils.pickImage(ImageSource.gallery, context);
+    await showPreviewDialog();
+  }
+
+  showPreviewDialog() async {
+    if (pAuth.tempProfilePic != null && mounted) {
+      await Utils.cropImage(context);
+      if (mounted) {
         showDialog(
           barrierDismissible: false,
           context: context,
