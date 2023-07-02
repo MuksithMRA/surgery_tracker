@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:surgery_tracker/constants/enviornment.dart';
+
 class AppUser {
   String firstName;
   String lastName;
@@ -12,7 +14,7 @@ class AppUser {
     this.lastName = '',
     this.specialization = '',
     this.userId = '',
-    this.profileImage = '',
+    this.profileImage = Enviornment.defaultAvatarImage,
     this.email = '',
   });
 

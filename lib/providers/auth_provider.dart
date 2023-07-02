@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:surgery_tracker/models/app_user.dart';
-import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import '../models/auth_user.dart';
-import '../models/error_model.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
 import '../utils/utils.dart';
@@ -28,7 +26,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> register() async {
-    user.appUser = appUser;
     return await authService.register(user).then(
       (value) {
         if (value != null) {
@@ -89,14 +86,8 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  Future<bool> forgetPassword(BuildContext context) async {
-    var response = AuthService.forgetPassword(user.email);
-    if (response != null) {
-      return true;
-    } else {
-      UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
-      return false;
-    }
+  Future<void> forgetPassword(BuildContext context) async {
+    await AuthService.forgetPassword(user.email);
   }
 
   User? getCurrentUser() {

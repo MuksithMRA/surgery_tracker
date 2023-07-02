@@ -36,10 +36,11 @@ class AuthService {
       await _auth
           .createUserWithEmailAndPassword(
               email: authModel.email, password: authModel.password)
-          .then((value) => {
-                debugPrint("User registered ${value.user!.uid}"),
-                authModel.userId = value.user!.uid,
-              });
+          .then((value) {
+        debugPrint("User registered ${value.user!.uid}");
+        authModel.userId = value.user!.uid;
+        authModel.appUser.userId = authModel.userId;
+      });
       return authModel;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

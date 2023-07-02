@@ -10,14 +10,8 @@ class UserService {
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(user.userId)
-          .set({
-        'uid': user.userId,
-        'first_name': user.appUser.firstName,
-        'last_name': user.appUser.lastName,
-        'email': user.email,
-        'profilePic': user.appUser.profileImage,
-      });
+          .doc()
+          .set(user.appUser.toMap());
       authUser!.updateDisplayName(
           "${user.appUser.firstName} ${user.appUser.lastName}");
       authUser!.updateEmail(user.email);

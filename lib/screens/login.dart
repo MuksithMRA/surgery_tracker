@@ -11,6 +11,7 @@ import 'package:surgery_tracker/widgets/util_widgets.dart';
 
 import '../providers/auth_provider.dart';
 import '../utils/screen_size.dart';
+import 'verification.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -93,25 +94,25 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 5,
               ),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {
-              //       Navigator.push(
-              //         context,
-              //         MaterialPageRoute(
-              //           builder: (_) => const VerificationPage(),
-              //         ),
-              //       );
-              //     },
-              //     child: const Text(
-              //       "Forgot Password",
-              //       style: TextStyle(
-              //         fontSize: 15,
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const VerificationPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Forgot Password",
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(
                 height: 10,
               ),

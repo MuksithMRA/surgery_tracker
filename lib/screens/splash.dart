@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:surgery_tracker/constants/storage_keys.dart';
+import 'package:provider/provider.dart';
+import 'package:surgery_tracker/providers/auth_provider.dart';
 import 'package:surgery_tracker/screens/home.dart';
 import 'package:surgery_tracker/utils/screen_size.dart';
 import 'package:surgery_tracker/screens/login.dart';
@@ -21,25 +21,23 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(
       const Duration(seconds: 3),
       () async {
-        await SharedPreferences.getInstance().then((pref) {
-          if (pref.containsKey(StorageKeys.sessionID)) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const Home(),
-              ),
-              (route) => false,
-            );
-          } else {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const LoginScreen(),
-              ),
-              (route) => false,
-            );
-          }
-        });
+        if (context.read<AuthProvider>().isLoggedIn()) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const Home(),
+            ),
+            (route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LoginScreen(),
+            ),
+            (route) => false,
+          );
+        }
       },
     );
   }

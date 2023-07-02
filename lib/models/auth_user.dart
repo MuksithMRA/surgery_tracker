@@ -13,9 +13,7 @@ class AuthUser {
     this.name = '',
     this.email = '',
     this.password = '',
-  }) {
-    name = "${appUser.firstName} ${appUser.lastName}";
-  }
+  });
 
   get getAppUser => appUser;
 

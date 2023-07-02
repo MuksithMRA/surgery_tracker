@@ -17,4 +17,7 @@ class Enviornment {
     name: "surgeries",
     code: "64931d96022fc82561d9",
   );
+
+  static const String defaultAvatarImage =
+      "https://firebasestorage.googleapis.com/v0/b/surgerey-tracker.appspot.com/o/users%2Fdoctor_avatar.jpg?alt=media&token=94864bd5-96d6-4155-8655-d38351aa45f8";
 }
