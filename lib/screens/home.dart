@@ -155,6 +155,9 @@ class _HomeState extends State<Home> {
                 children: [
                   Flexible(
                     child: TextField(
+                      onChanged: (value) {
+                        pSurgery.searchSurgries(value.trim().toLowerCase());
+                      },
                       decoration: InputDecoration(
                         suffixIcon: const Icon(Icons.search),
                         hintText: 'Enter Consultant Name or Surgery Name',
@@ -177,17 +180,17 @@ class _HomeState extends State<Home> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      if (surgery.surgeries.isNotEmpty)
+                      if (surgery.searchResult.isNotEmpty)
                         ...List.generate(
-                          surgery.surgeries.length + 1,
+                          surgery.searchResult.length + 1,
                           (index) {
-                            if (index == surgery.surgeries.length) {
+                            if (index == surgery.searchResult.length) {
                               return SizedBox(
                                 height: ScreenSize.height * 0.06,
                               );
                             }
                             SurgeryModel surgeryModel =
-                                surgery.surgeries[index];
+                                surgery.searchResult[index];
                             return Column(
                               children: [
                                 Container(

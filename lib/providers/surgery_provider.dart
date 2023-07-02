@@ -4,7 +4,9 @@ import 'package:surgery_tracker/services/surgery_services.dart';
 
 class SurgeryProvider extends ChangeNotifier {
   List<SurgeryModel> surgeries = [];
+  List<SurgeryModel> searchResult = [];
   SurgeryModel surgeryModel = SurgeryModel();
+  String surgeryText = "";
 
   Future<bool> getAllSurgeries() async {
     return await SurgeryServices.getAllSurgeries().then((value) {
@@ -14,6 +16,7 @@ class SurgeryProvider extends ChangeNotifier {
           surgeryModel.documentID = e.id;
           return surgeryModel;
         }).toList();
+        searchSurgries("");
         notifyListeners();
         return true;
       } else {
@@ -59,6 +62,19 @@ class SurgeryProvider extends ChangeNotifier {
     );
     notifyListeners();
     return success;
+  }
+
+  void searchSurgries(String searchText) {
+    if (searchText.isNotEmpty) {
+      searchResult = surgeries
+          .where((element) =>
+              element.consultantName.toLowerCase().contains(searchText) ||
+              element.surgeryName.toLowerCase().contains(searchText))
+          .toList();
+    } else {
+      searchResult = surgeries;
+    }
+    notifyListeners();
   }
 
   setSurgery(SurgeryModel surgery) {
