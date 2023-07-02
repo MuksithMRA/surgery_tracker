@@ -411,7 +411,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         if (isSuccess) {
           UtilWidgets.showSnackBar(
-              context, "Profile Updated SuccessFully", false);
+              context, "Profile updated successfully", false);
         } else {
           UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
         }
