@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:surgery_tracker/services/storage_service.dart';
 
 import '../models/app_user.dart';
 import '../models/auth_user.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
-import '../utils/utils.dart';
 
 class AuthProvider extends ChangeNotifier {
   final bool _isAuthenticated = false;
@@ -16,6 +16,7 @@ class AuthProvider extends ChangeNotifier {
   String confirmPassword = '';
   bool get isAuthenticated => _isAuthenticated;
   AuthService authService = AuthService();
+  File? tempProfilePic;
 
   Future<bool> login() async {
     bool success = await authService.login(user).then((value) => value);
@@ -53,6 +54,7 @@ class AuthProvider extends ChangeNotifier {
         if (value != null) {
           Map<String, dynamic> user = value.docs.first.data();
           appUser = AppUser.fromMap(user);
+          appUser.documentId = value.docs.first.id;
           this.user.email = appUser.email;
           this.user.userId = appUser.userId;
           this.user.appUser = appUser;
@@ -65,15 +67,29 @@ class AuthProvider extends ChangeNotifier {
     return null;
   }
 
+  Future<bool> updateProfile() async {
+    bool success = false;
+    await UserService.editUser(user).then(
+      (value) async {
+        success = value;
+        if (success) {
+          await getCurentUserModel();
+        }
+      },
+    );
+    notifyListeners();
+    return success;
+  }
+
   Future<bool> updateSingleField(String key, String value) async {
     return await UserService.updateSingleField(key, value)
         .then((success) async {
       if (success) {
-        if (key == 'profilePic') {
+        if (key == 'profileImage') {
           getCurrentUser()!.updatePhotoURL(value);
         }
 
-        if (key == 'first_name' || key == 'last_name') {
+        if (key == 'firstName' || key == 'lastName') {
           await getCurentUserModel();
           getCurrentUser()!
               .updateDisplayName("${appUser.firstName} ${appUser.lastName}");
@@ -84,6 +100,16 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     });
+  }
+
+  Future<void> setProfileImage() async {
+    if (tempProfilePic != null) {
+      String? imageUrl = await StorageService.uploadImage(tempProfilePic!);
+      if (imageUrl != null) {
+        setProfileImageUrl(imageUrl);
+        await updateProfile();
+      }
+    }
   }
 
   Future<void> forgetPassword(BuildContext context) async {
@@ -104,10 +130,9 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setProfileImage({File? profileImage}) async {
-    profileImage ??= File("assets/images/doctor_avatar.png");
-    String profileImageBase64 = await Utils.imageToBase64(profileImage);
-    user.appUser.profileImage = profileImageBase64;
+  void setProfileImageUrl(String url) {
+    appUser.profileImage = url;
+    user.appUser = appUser;
     notifyListeners();
   }
 
@@ -139,6 +164,11 @@ class AuthProvider extends ChangeNotifier {
 
   void setConfirmPassword(String confirmPassword) {
     this.confirmPassword = confirmPassword;
+    notifyListeners();
+  }
+
+  void setTempProfilePicFile(File file) {
+    tempProfilePic = file;
     notifyListeners();
   }
 }

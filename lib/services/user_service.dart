@@ -6,6 +6,7 @@ import '../models/error_model.dart';
 
 class UserService {
   static final User? authUser = FirebaseAuth.instance.currentUser;
+  static final _users = FirebaseFirestore.instance.collection('users');
   static Future<bool> addUser(AuthUser user) async {
     try {
       await FirebaseFirestore.instance
@@ -43,12 +44,27 @@ class UserService {
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({key: value});
+          .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) {
+        value.docs.first.data().update(key, (val) => value);
+      });
 
       return true;
     } on FirebaseException catch (e) {
       ErrorModel.errorMessage = e.message ?? '';
+    } on Exception catch (e) {
+      ErrorModel.errorMessage = e.toString();
+    }
+    return false;
+  }
+
+  static Future<bool> editUser(AuthUser model) async {
+    try {
+      await _users.doc(model.appUser.documentId).update(model.appUser.toMap());
+      return true;
+    } on FirebaseException catch (e) {
+      ErrorModel.errorMessage = e.message!;
     } on Exception catch (e) {
       ErrorModel.errorMessage = e.toString();
     }

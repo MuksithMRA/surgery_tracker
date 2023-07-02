@@ -156,7 +156,9 @@ class _HomeState extends State<Home> {
                   Flexible(
                     child: TextField(
                       onChanged: (value) {
-                        pSurgery.searchSurgries(value.trim().toLowerCase());
+                        pSurgery.searchSurgries(
+                          value.trim().toLowerCase(),
+                        );
                       },
                       decoration: InputDecoration(
                         suffixIcon: const Icon(Icons.search),

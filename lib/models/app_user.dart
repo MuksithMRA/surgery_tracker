@@ -9,6 +9,7 @@ class AppUser {
   String userId;
   String profileImage;
   String email;
+  String documentId;
   AppUser({
     this.firstName = '',
     this.lastName = '',
@@ -16,6 +17,7 @@ class AppUser {
     this.userId = '',
     this.profileImage = Enviornment.defaultAvatarImage,
     this.email = '',
+    this.documentId = '',
   });
 
   Map<String, dynamic> toMap() {

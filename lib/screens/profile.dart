@@ -3,9 +3,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:surgery_tracker/providers/auth_provider.dart';
 
+import '../models/error_model.dart';
 import '../utils/screen_size.dart';
 import '../utils/utils.dart';
 import '../widgets/loader_overlay.dart';
+import '../widgets/util_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -343,17 +345,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget imagePreviewDialog() {
     return AlertDialog(
       title: const Text("Image Preview"),
-      content: const CircleAvatar(
+      content: CircleAvatar(
         radius: 80,
-        // backgroundImage: Provider.of<UserProvider>(context, listen: true)
-        //     .tempProfilePic
-        //     ?.image,
+        backgroundImage: Image.file(
+                Provider.of<AuthProvider>(context, listen: true)
+                    .tempProfilePic!)
+            .image,
       ),
       actions: [
         ElevatedButton(
           onPressed: () async {
-            pAuth.setProfileImage();
-            updateProfile();
+            await LoadingOverlay.of(context).during(pAuth.setProfileImage());
             if (mounted) {
               Navigator.pop(context);
             }
@@ -372,16 +374,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> updateProfile() async {
     if (mounted) {
-      // bool isSuccess =
-      //     await LoadingOverlay.of(context).during(pAuth.editUser());
-      // if (mounted) {
-      //   if (isSuccess) {
-      //     UtilWidgets.showSnackBar(
-      //         context, "Profile Updated SuccessFully", false);
-      //   } else {
-      //     UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
-      //   }
-      // }
+      bool isSuccess =
+          await LoadingOverlay.of(context).during(pAuth.updateProfile());
+      if (mounted) {
+        if (isSuccess) {
+          UtilWidgets.showSnackBar(
+              context, "Profile Updated SuccessFully", false);
+        } else {
+          UtilWidgets.showSnackBar(context, ErrorModel.errorMessage, true);
+        }
+      }
     }
   }
 
@@ -389,13 +391,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await Utils.pickImage(source, context);
     if (mounted) {
       Navigator.pop(context);
-      // if (pUser.tempProfilePic != null) {
-      //   showDialog(
-      //     barrierDismissible: false,
-      //     context: context,
-      //     builder: (_) => imagePreviewDialog(),
-      //   );
-      // }
+      if (pAuth.tempProfilePic != null) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) => imagePreviewDialog(),
+        );
+      }
     }
   }
 }

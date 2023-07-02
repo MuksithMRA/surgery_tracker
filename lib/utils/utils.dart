@@ -43,19 +43,19 @@ class Utils {
 
   static Future pickImage(ImageSource source, BuildContext context) async {
     try {
-      AuthProvider pUser = context.read<AuthProvider>();
+      AuthProvider pAuth = context.read<AuthProvider>();
       final ImagePicker picker = ImagePicker();
       final XFile? pickedFile = await picker.pickImage(
         source: source,
       );
 
       if (pickedFile != null) {
-        // pUser.setTempProfilePicFile(File(pickedFile.path));
-        await Utils.xFileToImage(pickedFile).then(
-          (value) => {
-            //  pUser.setTempProfilePic(value),
-          },
-        );
+        pAuth.setTempProfilePicFile(File(pickedFile.path));
+        // await Utils.xFileToImage(pickedFile).then(
+        //   (value) => {
+        //      pUser.setTempProfilePic(value),
+        //   },
+        // );
       }
     } on Exception catch (e) {
       UtilWidgets.showSnackBar(context, "Error: $e", true);
